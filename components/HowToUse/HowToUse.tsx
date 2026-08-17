@@ -1,9 +1,21 @@
-"use client";
-
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Dialog, Transition } from "@headlessui/react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Cancel01Icon,
+  PlayIcon,
+} from "@hugeicons/core-free-icons";
 
 import styles from "./HowToUse.module.css";
 
@@ -14,7 +26,6 @@ type Props = {
 type VideoItem = {
   id: string;
   title: string;
-  subtitle: string;
   src: string;
 };
 
@@ -22,26 +33,49 @@ const videos: VideoItem[] = [
   {
     id: "vid-1",
     title: "Technique 1: Neck & Lymphatic Drainage",
-    subtitle: "Neck & Collarbone Ritual",
     src: "/videos/how-to-use-1.mp4",
   },
   {
     id: "vid-2",
     title: "Technique 2: Jawline Definition",
-    subtitle: "Jaw Contouring & Sculpting",
     src: "/videos/how-to-use-2.mp4",
   },
   {
     id: "vid-3",
     title: "Technique 3: Cheeks & Temples",
-    subtitle: "Cheek Depuffing & Lifting",
     src: "/videos/how-to-use-3.mp4",
   },
   {
     id: "vid-4",
     title: "Technique 4: Eyes & Forehead",
-    subtitle: "Eye Contour & Forehead Relaxation",
     src: "/videos/how-to-use-4.mp4",
+  },
+];
+
+const ritualTips = [
+  {
+    step: "01",
+    title: "Prepare with Slip",
+    desc: "Always apply 3-5 drops of BL+ Serum or Face Oil before gliding to ensure effortless movement without skin friction.",
+    tag: "Preparation",
+  },
+  {
+    step: "02",
+    title: "Flat 15°–45° Angle",
+    desc: "Keep the porcelain tool almost flat against your skin. Never hold it perpendicular at a sharp 90-degree angle.",
+    tag: "Posture",
+  },
+  {
+    step: "03",
+    title: "Featherlight Pressure",
+    desc: "Lymphatic vessels are right beneath the surface. Use gentle upward and outward sweeps to stimulate natural flow.",
+    tag: "Technique",
+  },
+  {
+    step: "04",
+    title: "Chill for Maximum Depuff",
+    desc: "Store in the refrigerator for 10 minutes prior to your morning ritual for enhanced cooling and redness relief.",
+    tag: "Pro Tip",
   },
 ];
 
@@ -54,10 +88,6 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
     setIsOpen(true);
   };
 
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
   const prevVideo = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : videos.length - 1));
   };
@@ -66,17 +96,16 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
     setCurrentIndex((prev) => (prev < videos.length - 1 ? prev + 1 : 0));
   };
 
-  // Keyboard navigation
+  // Keyboard navigation for carousel
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      if (e.key === "Escape") closeModal();
       if (e.key === "ArrowLeft") prevVideo();
       if (e.key === "ArrowRight") nextVideo();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, closeModal]);
+  }, [isOpen]);
 
   const activeVideo = videos[currentIndex];
 
@@ -110,7 +139,6 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
               className="w-full h-auto object-cover"
             />
           </div>
-
           {/* ===== Plain Typography Instructions & Benefits ===== */}
           <div className="max-w-4xl mx-auto my-12 space-y-8 text-gray500 leading-relaxed">
             {/* Step 1 */}
@@ -227,49 +255,95 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
             </div>
           </div>
 
-          {/* ===== 4 Videos Grid at Bottom ===== */}
-          <div className="mt-14 mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* ===== Visual Video Frames Grid with Ambient Background Styling ===== */}
+          <div className="my-10 md:my-14 p-3 sm:p-7 md:p-9 rounded-xs bg-[#f8f9f7] border border-gray200/90 relative overflow-hidden shadow-xs">
+            {/* Subtle background ambient glow */}
+            <div className="absolute -top-24 -left-24 size-80 bg-emerald-50/60 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -right-24 size-80 bg-stone-100/80 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6 z-10">
               {videos.map((vid, index) => (
                 <div
                   key={vid.id}
                   onClick={() => openModalAt(index)}
-                  className="group relative flex flex-col bg-white border border-gray200 p-3 sm:p-4 h-full shadow-xs cursor-pointer hover:border-gray400 transition-all duration-200"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      openModalAt(index);
+                    }
+                  }}
+                  className="group relative bg-white p-1.5 sm:p-3 border border-gray200 shadow-xs hover:shadow-xl hover:border-gray400 hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
                   role="button"
                   tabIndex={0}
-                  aria-label={`Preview ${vid.title}`}
+                  aria-label={`Preview ritual video ${index + 1}`}
                 >
-                  <div className={styles.videoWrapper}>
+                  {/* Gallery Inner Frame Bezel */}
+                  <div className="relative aspect-9/16 w-full overflow-hidden bg-black ring-1 ring-black/5">
                     <video
                       src={vid.src}
                       autoPlay
                       loop
                       muted
                       playsInline
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                       aria-label={vid.title}
                     />
-                    {/* Hover expand overlay */}
-                    <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-                      <span className="bg-white/95 text-gray800 text-xs font-semibold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 backdrop-blur-xs tracking-wider uppercase">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="size-3.5"
-                        >
-                          <path d="M15 3h6v6" />
-                          <path d="M9 21H3v-6" />
-                          <path d="M21 3l-7 7" />
-                          <path d="M3 21l7-7" />
-                        </svg>
-                        Full Web Preview
+
+                    {/* Ambient Hover Shimmer / Glass Refraction */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    {/* Minimalist Floating Play Icon Trigger (Only visible on hover) */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span className="size-9 sm:size-11 rounded-full bg-white/90 group-hover:bg-white text-gray-900 group-hover:scale-110 shadow-md flex items-center justify-center backdrop-blur-xs transition-all duration-300">
+                        <HugeiconsIcon
+                          icon={PlayIcon}
+                          className="size-4 sm:size-5 ml-0.5 text-gray-800"
+                        />
                       </span>
                     </div>
+
+                    {/* Minimal Corner Frame Accents */}
+                    <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 size-2 sm:size-2.5 border-t border-l border-white/60 pointer-events-none group-hover:border-white transition-colors" />
+                    <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 size-2 sm:size-2.5 border-t border-r border-white/60 pointer-events-none group-hover:border-white transition-colors" />
+                    <div className="absolute bottom-2 left-2 sm:bottom-2.5 sm:left-2.5 size-2 sm:size-2.5 border-b border-l border-white/60 pointer-events-none group-hover:border-white transition-colors" />
+                    <div className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 size-2 sm:size-2.5 border-b border-r border-white/60 pointer-events-none group-hover:border-white transition-colors" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ===== Addon Design Section: Pro Tips & Best Practices ===== */}
+          <div className="mt-14 pt-12 border-t border-gray200">
+            <div className="max-w-2xl mx-auto text-center mb-8">
+              <span className="text-[11px] uppercase tracking-widest text-gray400 font-semibold block mb-1">
+                Expert Guidelines
+              </span>
+              <h3 className="text-xl sm:text-2xl text-gray500 font-normal tracking-wide">
+                4 Principles for Maximum Results
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {ritualTips.map((tip) => (
+                <div
+                  key={tip.step}
+                  className="p-5 bg-white border border-gray200 hover:border-gray400 transition-all duration-300 flex flex-col justify-between shadow-xs"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-bold uppercase tracking-widest text-gray400">
+                        {tip.step}
+                      </span>
+                      <span className="text-[10px] uppercase font-semibold px-2 py-0.5 bg-gray100 text-gray500">
+                        {tip.tag}
+                      </span>
+                    </div>
+                    <h4 className="text-sm font-semibold text-gray500 mb-2">
+                      {tip.title}
+                    </h4>
+                    <p className="text-xs text-gray400 leading-relaxed">
+                      {tip.desc}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -278,163 +352,72 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
         </div>
       </section>
 
-      {/* ===== FULL WEB PAGE PREVIEW DIALOG ===== */}
-      <Transition show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="fixed inset-0 z-50 overflow-hidden"
-          onClose={closeModal}
+      {/* ===== FULL WEB PREVIEW DIALOG (SHADCN UI) ===== */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="fixed inset-0 top-0 left-0 translate-x-0 translate-y-0 w-screen h-screen h-dvh max-w-none sm:max-w-none rounded-none border-none bg-black/95 p-0 gap-0 overflow-hidden flex items-center justify-center ring-0"
         >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+          {/* Accessible Hidden Header for Screen Readers */}
+          <DialogHeader className="sr-only">
+            <DialogTitle>{activeVideo.title}</DialogTitle>
+            <DialogDescription>{activeVideo.title}</DialogDescription>
+          </DialogHeader>
+
+          {/* Close Button */}
+          <DialogClose
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full z-30 size-10 sm:size-11 cursor-pointer transition-all"
+              />
+            }
           >
-            <Dialog.Panel className={styles.fullPageModal}>
-              {/* Full Page Header */}
-              <div className={styles.modalHeader}>
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="size-8 sm:size-9 rounded-full bg-white/10 flex items-center justify-center border border-white/20 text-white font-medium text-xs sm:text-sm">
-                    {currentIndex + 1}
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base md:text-lg font-medium text-white tracking-wide">
-                      {activeVideo.title}
-                    </h3>
-                    <p className="text-xs text-gray-400">
-                      Blue Lagoon Skincare Ritual • Video {currentIndex + 1} of{" "}
-                      {videos.length}
-                    </p>
-                  </div>
-                </div>
+            <HugeiconsIcon icon={Cancel01Icon} className="size-5" />
+            <span className="sr-only">Close preview</span>
+          </DialogClose>
 
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all border border-white/20 focus:outline-none"
-                    aria-label="Close full page preview"
-                  >
-                    <span>Close</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="size-4"
-                    >
-                      <path d="M18 6 6 18" />
-                      <path d="m6 6 12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+          {/* Previous Video Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={prevVideo}
+            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full z-30 size-11 sm:size-12 cursor-pointer transition-all"
+            aria-label="Previous video"
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="size-5 sm:size-6" />
+          </Button>
 
-              {/* Full Page Main Body: Video Player with Next/Prev Arrows */}
-              <div className={styles.modalBody}>
-                {/* Previous Button */}
-                <button
-                  type="button"
-                  onClick={prevVideo}
-                  className="absolute left-3 sm:left-6 md:left-10 z-30 size-11 sm:size-14 rounded-full bg-black/60 hover:bg-white text-white hover:text-black border border-white/20 backdrop-blur-md shadow-2xl transition-all flex items-center justify-center focus:outline-none"
-                  aria-label="Previous video technique"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-5 sm:size-6"
-                  >
-                    <path d="m15 18-6-6 6-6" />
-                  </svg>
-                </button>
+          {/* Full Web Video Container */}
+          <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+            <video
+              key={activeVideo.src}
+              src={activeVideo.src}
+              controls
+              autoPlay
+              loop
+              playsInline
+              className="w-full h-full max-h-screen max-h-dvh object-contain"
+              aria-label={activeVideo.title}
+            />
+          </div>
 
-                {/* Video Media */}
-                <div className={styles.modalSlideMedia}>
-                  <video
-                    key={activeVideo.src}
-                    src={activeVideo.src}
-                    controls
-                    autoPlay
-                    loop
-                    playsInline
-                    className="w-full h-full max-h-full object-contain rounded-md shadow-2xl"
-                    aria-label={activeVideo.title}
-                  />
-                </div>
-
-                {/* Next Button */}
-                <button
-                  type="button"
-                  onClick={nextVideo}
-                  className="absolute right-3 sm:right-6 md:right-10 z-30 size-11 sm:size-14 rounded-full bg-black/60 hover:bg-white text-white hover:text-black border border-white/20 backdrop-blur-md shadow-2xl transition-all flex items-center justify-center focus:outline-none"
-                  aria-label="Next video technique"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-5 sm:size-6"
-                  >
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Full Page Bottom Bar */}
-              <div className={styles.modalFooter}>
-                <div className="flex items-center gap-2">
-                  {videos.map((vid, idx) => (
-                    <button
-                      key={vid.id}
-                      type="button"
-                      onClick={() => setCurrentIndex(idx)}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all border ${
-                        currentIndex === idx
-                          ? "bg-white text-black border-white"
-                          : "bg-white/10 text-gray-300 border-white/15 hover:bg-white/20"
-                      }`}
-                      aria-label={`Jump to ${vid.title}`}
-                    >
-                      Step {idx + 1}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-xs text-gray-400 hidden sm:inline">
-                    {currentIndex + 1} / {videos.length}
-                  </span>
-                  <Link
-                    href="/products/1"
-                    onClick={closeModal}
-                    className="px-4 py-2 bg-white text-black hover:bg-gray-200 text-xs uppercase tracking-widest font-semibold rounded-none transition-colors"
-                  >
-                    View Product ($45)
-                  </Link>
-                </div>
-              </div>
-            </Dialog.Panel>
-          </Transition.Child>
-        </Dialog>
-      </Transition>
+          {/* Next Video Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={nextVideo}
+            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full z-30 size-11 sm:size-12 cursor-pointer transition-all"
+            aria-label="Next video"
+          >
+            <HugeiconsIcon icon={ArrowRight01Icon} className="size-5 sm:size-6" />
+          </Button>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
 
 export default HowToUse;
+

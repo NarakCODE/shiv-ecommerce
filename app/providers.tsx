@@ -7,6 +7,7 @@ import { getCookie } from "cookies-next";
 import { ProvideCart } from "../context/cart/CartProvider";
 import { ProvideWishlist } from "../context/wishlist/WishlistProvider";
 import { ProvideAuth } from "../context/AuthContext";
+import SmoothScroll from "../components/SmoothScroll/SmoothScroll";
 
 import enMessages from "../messages/common/en.json";
 import myMessages from "../messages/common/my.json";
@@ -44,11 +45,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       locale={locale}
       timeZone="UTC"
     >
-      <ProvideAuth>
-        <ProvideWishlist>
-          <ProvideCart>{children}</ProvideCart>
-        </ProvideWishlist>
-      </ProvideAuth>
+      <SmoothScroll>
+        <ProvideAuth>
+          <ProvideWishlist>
+            <ProvideCart>{children}</ProvideCart>
+          </ProvideWishlist>
+        </ProvideAuth>
+      </SmoothScroll>
     </NextIntlClientProvider>
   );
 }

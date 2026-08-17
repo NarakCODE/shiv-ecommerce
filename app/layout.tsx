@@ -11,16 +11,16 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
-const title = "Haru Fashion";
+const title = "SHIV Skincare | Icelandic Gua Sha & Mineral Beauty";
 const desc =
-  "Haru Fashion e-commerce developed with Next.JS. Coded with 🖤 by Sat Naing (satnaing.dev).";
-const keywords = "Haru Fashion, Online Shop, E-commerce, Sat Naing, NextJS";
+  "Experience the transformative power of the authentic porcelain Gua Sha tool and Icelandic mineral skincare.";
+const keywords = "SHIV Skincare, Gua Sha Tool, Icelandic Skincare, Facial Sculpting, Porcelain Gua Sha, Mineral Beauty";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://haru-fashion.vercel.app"),
   title: {
     default: title,
-    template: "%s | Haru Fashion",
+    template: "%s | SHIV Skincare",
   },
   description: desc,
   keywords: keywords.split(", "),
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://haru-fashion.vercel.app",
-    siteName: "Haru Fashion",
+    siteName: "SHIV Skincare",
     title: title,
     description: desc,
     images: [

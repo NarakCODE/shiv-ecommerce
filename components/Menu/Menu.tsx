@@ -1,47 +1,22 @@
 "use client";
 
-import { Fragment, useState, useEffect } from "react";
-import { Menu as HMenu } from "@headlessui/react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, Transition } from "@headlessui/react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
-import { getCookie, setCookie } from "cookies-next";
 
 import MenuIcon from "../../public/icons/MenuIcon";
-import AuthForm from "../Auth/AuthForm";
 import WhistlistIcon from "../../public/icons/WhistlistIcon";
-import UserIcon from "../../public/icons/UserIcon";
-import SearchIcon from "../../public/icons/SearchIcon";
-import DownArrow from "../../public/icons/DownArrow";
 import InstagramLogo from "../../public/icons/InstagramLogo";
 import FacebookLogo from "../../public/icons/FacebookLogo";
 import TiktokLogo from "../../public/icons/TiktokLogo";
 import { useWishlist } from "../../context/wishlist/WishlistProvider";
-import { useAuth } from "../../context/AuthContext";
 
 export default function Menu() {
   const t = useTranslations("Navigation");
-  const router = useRouter();
   const { wishlist } = useWishlist();
-  const auth = useAuth();
   const [open, setOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [currentLocale, setCurrentLocale] = useState("en");
-
-  useEffect(() => {
-    const saved = getCookie("NEXT_LOCALE");
-    if (saved && (saved === "en" || saved === "my")) {
-      setCurrentLocale(saved as string);
-    }
-  }, []);
-
-  const changeLocale = (newLocale: "en" | "my") => {
-    setCookie("NEXT_LOCALE", newLocale, { maxAge: 60 * 60 * 24 * 365 });
-    setCurrentLocale(newLocale);
-    window.location.reload();
-  };
 
   // Calculate Number of Wishlist
   let noOfWishlist = wishlist.length;
@@ -53,16 +28,6 @@ export default function Menu() {
   function openModal() {
     setOpen(true);
   }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setOpen(false);
-    router.push(`/search?q=${encodeURIComponent(searchValue)}`);
-  };
-
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setSearchValue((e.target as HTMLInputElement).value);
-  };
 
   return (
     <>
@@ -87,7 +52,7 @@ export default function Menu() {
         >
           <div className="min-h-screen">
             <Transition.Child as={Fragment}>
-              <Dialog.Overlay className="fixed inset-0 bg-gray500 opacity-50" />
+              <DialogBackdrop className="fixed inset-0 bg-gray500 opacity-50" />
             </Transition.Child>
             <Transition.Child
               as={Fragment}
@@ -107,9 +72,9 @@ export default function Menu() {
                     <Image
                       className="justify-center"
                       src="/logo.svg"
-                      alt="Picture of the author"
-                      width={85}
-                      height={22}
+                      alt="Shiv Logo"
+                      width={110}
+                      height={28}
                     />
                   </Link>
                   <button
@@ -122,19 +87,7 @@ export default function Menu() {
                 </div>
 
                 <div className="mb-10">
-                  <div className="itemContainer px-6 w-full flex flex-col justify-around items-center">
-                    <form
-                      className="flex w-full justify-between items-center mt-5 mb-5 border-gray300 border-b-2"
-                      onSubmit={handleSubmit}
-                    >
-                      <SearchIcon extraClass="text-gray300 w-6 h-6" />
-                      <input
-                        type="search"
-                        placeholder={t("search_anything")}
-                        className="px-4 py-2 w-full focus:outline-none text-xl"
-                        onChange={handleChange}
-                      />
-                    </form>
+                  <div className="itemContainer px-6 w-full flex flex-col justify-around items-center pt-6">
                     <Link
                       href="/products/1"
                       className="w-full text-xl hover:bg-gray100 text-left py-2"
@@ -171,13 +124,6 @@ export default function Menu() {
                       {t("contact_us")}
                     </Link>
                     <hr className="border border-gray300 w-full mt-2" />
-                    <div className="w-full text-xl py-2 my-3 flex justify-between">
-                      <AuthForm extraClass="flex justify-between w-full">
-                        <span>{auth.user ? t("profile") : t("login")}</span>
-                        <UserIcon />
-                      </AuthForm>
-                    </div>
-                    <hr className="border border-gray300 w-full" />
                     <Link
                       href="/wishlist"
                       className="text-xl py-2 my-3 w-full flex justify-between"
@@ -196,94 +142,6 @@ export default function Menu() {
                       </div>
                     </Link>
                     <hr className="border border-gray300 w-full" />
-
-                    {/* Locale Dropdown */}
-                    <HMenu
-                      as="div"
-                      className="relative bg-gray100 mt-4 mb-2 w-full"
-                    >
-                      <HMenu.Button
-                        as="button"
-                        className="flex justify-center items-center py-2 px-4 text-center w-full"
-                      >
-                        {currentLocale === "en" ? t("english") : t("myanmar")}{" "}
-                        <DownArrow />
-                      </HMenu.Button>
-                      <HMenu.Items
-                        className="flex flex-col w-full right-0 absolute p-1 border border-gray200 bg-white mt-2 outline-none"
-                        style={{ zIndex: 9999 }}
-                      >
-                        <HMenu.Item>
-                          <button
-                            type="button"
-                            onClick={() => changeLocale("en")}
-                            className={`${
-                              currentLocale === "en"
-                                ? "bg-gray200 text-gray500"
-                                : "bg-white text-gray500"
-                            } py-2 px-4 text-center focus:outline-none w-full`}
-                          >
-                            {t("english")}
-                          </button>
-                        </HMenu.Item>
-                        <HMenu.Item>
-                          <button
-                            type="button"
-                            onClick={() => changeLocale("my")}
-                            className={`${
-                              currentLocale === "my"
-                                ? "bg-gray200 text-gray500"
-                                : "bg-white text-gray500"
-                            } py-2 px-4 text-center focus:outline-none w-full`}
-                          >
-                            {t("myanmar")}
-                          </button>
-                        </HMenu.Item>
-                      </HMenu.Items>
-                    </HMenu>
-
-                    {/* Currency Dropdown */}
-                    <HMenu as="div" className="relative bg-gray100 my-2 w-full">
-                      <HMenu.Button
-                        as="button"
-                        className="flex justify-center items-center py-2 px-4 text-center w-full"
-                      >
-                        {t("usd")} <DownArrow />
-                      </HMenu.Button>
-                      <HMenu.Items
-                        className="flex flex-col w-full right-0 absolute p-1 border border-gray200 bg-white mt-2 outline-none"
-                        style={{ zIndex: 9999 }}
-                      >
-                        <HMenu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={`${
-                                active
-                                  ? "bg-gray100 text-gray500"
-                                  : "bg-white text-gray500"
-                              } py-2 px-4 text-center focus:outline-none`}
-                            >
-                              {t("usd")}
-                            </a>
-                          )}
-                        </HMenu.Item>
-                        <HMenu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={`${
-                                active
-                                  ? "bg-gray100 text-gray500"
-                                  : "bg-white text-gray500"
-                              } py-2 px-4 text-center focus:outline-none`}
-                            >
-                              {t("mmk")}
-                            </a>
-                          )}
-                        </HMenu.Item>
-                      </HMenu.Items>
-                    </HMenu>
 
                     <div className="flex my-8 w-3/5 space-x-6 justify-center items-center">
                       <a
@@ -324,3 +182,4 @@ export default function Menu() {
     </>
   );
 }
+

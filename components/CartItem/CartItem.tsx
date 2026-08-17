@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, Transition } from "@headlessui/react";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -19,12 +19,15 @@ export default function CartItem() {
   const [animate, setAnimate] = useState("");
   const { cart, addOne, removeItem, deleteItem } = useCart();
 
-  let subtotal = 0;
+  const subtotal = cart.reduce(
+    (acc, item) => acc + item.price * (item.qty || 0),
+    0
+  );
 
-  let noOfItems = 0;
-  cart.forEach((item) => {
-    noOfItems += item.qty!;
-  });
+  const noOfItems = cart.reduce(
+    (acc, item) => acc + (item.qty || 0),
+    0
+  );
 
   const handleAnimate = useCallback(() => {
     if (noOfItems === 0) return;
@@ -53,7 +56,12 @@ export default function CartItem() {
   return (
     <>
       <div className="relative">
-        <button type="button" onClick={openModal} aria-label="Cart">
+        <button
+          type="button"
+          disabled
+          aria-label="Cart (Disabled)"
+          className="cursor-not-allowed opacity-40 focus:outline-none"
+        >
           <BagIcon extraClass="h-8 w-8 sm:h-6 sm:w-6" />
           {noOfItems > 0 && (
             <span
@@ -83,7 +91,7 @@ export default function CartItem() {
               //   leaveFrom="opacity-100"
               //   leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-gray500 opacity-50" />
+              <DialogBackdrop className="fixed inset-0 bg-gray500 opacity-50" />
             </Transition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
@@ -121,21 +129,18 @@ export default function CartItem() {
 
                 <div className="h-full">
                   <div className="itemContainer px-4 h-2/3 w-full flex-grow flex-shrink overflow-y-auto">
-                    {cart.map((item) => {
-                      subtotal += item.price * item.qty!;
-                      return (
-                        <Item
-                          key={item.id}
-                          name={item.name}
-                          price={item.price * item.qty!}
-                          qty={item.qty!}
-                          img={item.img1 as string}
-                          onAdd={() => addOne!(item)}
-                          onRemove={() => removeItem!(item)}
-                          onDelete={() => deleteItem!(item)}
-                        />
-                      );
-                    })}
+                    {cart.map((item) => (
+                      <Item
+                        key={item.id}
+                        name={item.name}
+                        price={item.price * item.qty!}
+                        qty={item.qty!}
+                        img={item.img1 as string}
+                        onAdd={() => addOne!(item)}
+                        onRemove={() => removeItem!(item)}
+                        onDelete={() => deleteItem!(item)}
+                      />
+                    ))}
                   </div>
                   <div className="btnContainer mt-4 px-4 h-1/3 mb-20 w-full flex flex-col ">
                     <div className="flex justify-between">
@@ -151,10 +156,9 @@ export default function CartItem() {
                       {t("view_cart")}
                     </LinkButton>
                     <Button
-                      value={t("checkout")}
-                      onClick={() => router.push(`/checkout`)}
-                      disabled={cart.length < 1 ? true : false}
-                      extraClass="text-center"
+                      value={`${t("checkout")} (Disabled)`}
+                      disabled={true}
+                      extraClass="text-center opacity-50 cursor-not-allowed"
                       size="lg"
                     />
                   </div>

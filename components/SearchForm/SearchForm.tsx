@@ -1,9 +1,9 @@
 "use client";
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, Transition } from "@headlessui/react";
 import { useTranslations } from "next-intl";
 
 import SearchIcon from "../../public/icons/SearchIcon";
@@ -15,7 +15,6 @@ export default function SearchForm() {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [searchItems, setSearchItems] = useState<itemType[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
   const [noResult, setNoResult] = useState(false);
 
   function closeModal() {
@@ -28,29 +27,30 @@ export default function SearchForm() {
     setOpen(true);
   }
 
-  useEffect(() => {
-    if (!isFetching) return;
-    const q = searchValue.trim().toLowerCase();
-    if (!q || SINGLE_PRODUCT.name.toLowerCase().includes(q) || "gua sha tool skincare".includes(q)) {
+  const performSearch = (val: string) => {
+    const q = val.trim().toLowerCase();
+    if (
+      !q ||
+      SINGLE_PRODUCT.name.toLowerCase().includes(q) ||
+      "gua sha tool skincare porcelain".includes(q)
+    ) {
       setSearchItems([SINGLE_PRODUCT]);
       setNoResult(false);
     } else {
       setSearchItems([]);
       setNoResult(true);
     }
-    setIsFetching(false);
-  }, [isFetching, searchValue]);
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSearchItems([]);
-    setIsFetching(true);
+    performSearch(searchValue);
   };
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setSearchValue((e.target as HTMLInputElement).value);
-    setSearchItems([]);
-    setNoResult(false);
+    const val = (e.target as HTMLInputElement).value;
+    setSearchValue(val);
+    performSearch(val);
   };
 
   return (
@@ -63,13 +63,12 @@ export default function SearchForm() {
       <Transition show={open} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
-          style={{ zIndex: 99999 }}
+          className="fixed inset-0 z-[99999] overflow-y-auto"
           static
           open={open}
           onClose={closeModal}
         >
-          <div className="min-h-screen text-center">
+          <div className="min-h-screen text-center relative z-[99999]">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -79,7 +78,7 @@ export default function SearchForm() {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-gray500 opacity-50" />
+              <DialogBackdrop className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[99998]" />
             </Transition.Child>
 
             <span

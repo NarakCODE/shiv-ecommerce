@@ -1,7 +1,7 @@
 "use client";
 
-import { Fragment, useState, FC } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, useState, FC, ReactNode } from "react";
+import { Dialog, DialogBackdrop, Transition } from "@headlessui/react";
 import { useTranslations } from "next-intl";
 
 import { useAuth } from "../../context/AuthContext";
@@ -25,7 +25,7 @@ const LoginForm: FC<Props> = ({ extraClass, children }) => {
   const [successMsg, setSuccessMsg] = useState("");
   const t = useTranslations("LoginRegister");
 
-  let modalBox: JSX.Element;
+  let modalBox: ReactNode;
   if (auth.user) {
     modalBox = (
       <SuccessModal successMsg={successMsg} setSuccessMsg={setSuccessMsg} />
@@ -105,7 +105,7 @@ const LoginForm: FC<Props> = ({ extraClass, children }) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-gray500 opacity-50" />
+              <DialogBackdrop className="fixed inset-0 bg-gray500 opacity-50" />
             </Transition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}

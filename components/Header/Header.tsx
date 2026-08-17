@@ -7,9 +7,6 @@ import { useTranslations } from "next-intl";
 
 import TopNav from "./TopNav";
 import WhistlistIcon from "../../public/icons/WhistlistIcon";
-import UserIcon from "../../public/icons/UserIcon";
-import AuthForm from "../Auth/AuthForm";
-import SearchForm from "../SearchForm/SearchForm";
 import CartItem from "../CartItem/CartItem";
 import Menu from "../Menu/Menu";
 import AppHeader from "./AppHeader";
@@ -82,8 +79,10 @@ const Header: React.FC<Props> = ({ title }) => {
       {/* ===== Main Navigation ===== */}
       <nav
         className={`${
-          scrolled ? "bg-white sticky top-0 shadow-md z-50" : "bg-transparent"
-        } w-full z-50 h-20 relative`}
+          scrolled
+            ? "bg-white/80 backdrop-blur-md sticky top-0 shadow-xs border-b border-gray200/60 z-50"
+            : "bg-white/60 backdrop-blur-md border-b border-white/30 z-50"
+        } w-full z-50 h-20 relative transition-all duration-300`}
       >
         <div className="app-max-width w-full">
           <div
@@ -105,19 +104,16 @@ const Header: React.FC<Props> = ({ title }) => {
               <li>
                 <Link href="/#testimonials">Reviews</Link>
               </li>
-              <li>
-                <Link href="/coming-soon">Our Story</Link>
-              </li>
             </ul>
 
-            {/* Haru Logo */}
+            {/* Shiv Logo */}
             <div className="flex-1 flex justify-center items-center cursor-pointer">
               <div className="w-32 h-auto">
                 <Link href="/">
                   <Image
                     className="justify-center"
                     src="/logo.svg"
-                    alt="Picture of the author"
+                    alt="Shiv Logo"
                     width={220}
                     height={50}
                     sizes="100vw"
@@ -129,14 +125,6 @@ const Header: React.FC<Props> = ({ title }) => {
 
             {/* Right Nav */}
             <ul className={`flex-1 flex justify-end ${styles.rightMenu}`}>
-              <li>
-                <SearchForm />
-              </li>
-              <li>
-                <AuthForm>
-                  <UserIcon />
-                </AuthForm>
-              </li>
               <li>
                 <Link href="/wishlist" passHref>
                   <button

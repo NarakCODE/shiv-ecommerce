@@ -214,12 +214,14 @@ export default function ShoppingCartPage() {
                 <span>{t("grand_total")}</span>
                 <span>$ {roundDecimal(subtotal + deliFee)}</span>
               </div>
+              <div className="p-3 my-3 bg-gray100 border border-gray200 text-xs text-gray500 text-center">
+                Online checkout is temporarily disabled.
+              </div>
               <Button
-                value={t("proceed_to_checkout")}
+                value="Checkout Disabled"
                 size="xl"
-                extraClass="w-full"
-                onClick={() => router.push(`/checkout`)}
-                disabled={cart.length < 1 ? true : false}
+                extraClass="w-full opacity-50 cursor-not-allowed"
+                disabled={true}
               />
             </div>
           </div>

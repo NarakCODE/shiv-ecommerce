@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -21,6 +21,23 @@ import InstagramLogo from "../../../public/icons/InstagramLogo";
 import TiktokLogo from "../../../public/icons/TiktokLogo";
 import Heart from "../../../public/icons/Heart";
 import HeartSolid from "../../../public/icons/HeartSolid";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button as ShadcnButton } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowExpand01Icon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Call02Icon,
+  Cancel01Icon,
+} from "@hugeicons/core-free-icons";
 
 type Props = {
   product: itemType;
@@ -35,6 +52,39 @@ export default function ProductClient({ product }: Props) {
   const [mainImg, setMainImg] = useState(galleryImages[0]);
   const [currentQty, setCurrentQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const currentPreviewIndex =
+    galleryImages.indexOf(mainImg) >= 0
+      ? galleryImages.indexOf(mainImg)
+      : 0;
+
+  const handlePrevImage = () => {
+    const nextIdx =
+      currentPreviewIndex > 0
+        ? currentPreviewIndex - 1
+        : galleryImages.length - 1;
+    setMainImg(galleryImages[nextIdx]);
+  };
+
+  const handleNextImage = () => {
+    const nextIdx =
+      currentPreviewIndex < galleryImages.length - 1
+        ? currentPreviewIndex + 1
+        : 0;
+    setMainImg(galleryImages[nextIdx]);
+  };
+
+  // Keyboard navigation for image preview
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isPreviewOpen) return;
+      if (e.key === "ArrowLeft") handlePrevImage();
+      if (e.key === "ArrowRight") handleNextImage();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isPreviewOpen, currentPreviewIndex]);
 
   const { addItem } = useCart();
   const { wishlist, addToWishlist, deleteWishlistItem } = useWishlist();
@@ -78,16 +128,16 @@ export default function ProductClient({ product }: Props) {
         </div>
 
         {/* ===== Main Content Section ===== */}
-        <div className="itemSection app-max-width app-x-padding py-10 flex flex-col md:flex-row gap-10">
+        <div className="itemSection app-max-width app-x-padding py-10 flex flex-col md:flex-row gap-8 lg:gap-10">
           {/* Left Gallery */}
-          <div className="imgSection w-full md:w-1/2 flex flex-col-reverse sm:flex-row gap-4">
-            <div className="flex sm:flex-col gap-3 justify-center sm:justify-start">
+          <div className="imgSection w-full md:w-1/2 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
+            <div className="flex sm:flex-col gap-2.5 sm:gap-3 justify-center sm:justify-start overflow-x-auto no-scrollbar py-1">
               {galleryImages.map((imgSrc, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => setMainImg(imgSrc)}
-                  className={`relative size-20 border transition-all overflow-hidden rounded-xs ${
+                  className={`relative size-16 sm:size-20 md:size-24 border transition-all overflow-hidden rounded-xs shrink-0 ${
                     mainImg === imgSrc
                       ? "border-gray500 ring-1 ring-gray500 opacity-100"
                       : "border-gray200 opacity-60 hover:opacity-100"
@@ -97,22 +147,43 @@ export default function ProductClient({ product }: Props) {
                     src={imgSrc}
                     alt={`${product.name} view ${idx + 1}`}
                     fill
-                    sizes="80px"
+                    sizes="(max-width: 640px) 64px, 96px"
                     className="object-cover"
                   />
                 </button>
               ))}
             </div>
 
-            <div className="relative flex-1 aspect-square bg-gray-50 border border-gray200 overflow-hidden rounded-xs">
+            {/* Main Image View with Preview Trigger */}
+            <div
+              onClick={() => setIsPreviewOpen(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsPreviewOpen(true);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Click to preview image full screen"
+              className="relative flex-1 w-full aspect-square bg-gray-50 border border-gray200 overflow-hidden rounded-xs group cursor-zoom-in"
+            >
               <Image
                 src={mainImg}
                 alt={product.name}
                 fill
                 priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 50vw"
+                className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
+
+              {/* Hover Preview Overlay Badge */}
+              <div className="absolute inset-0 bg-black/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                <span className="bg-white/90 backdrop-blur-xs text-gray-800 text-xs font-semibold px-3 py-1.5 shadow-sm border border-gray200 flex items-center gap-1.5 uppercase tracking-wider">
+                  <HugeiconsIcon icon={ArrowExpand01Icon} className="size-3.5" />
+                  Preview
+                </span>
+              </div>
             </div>
           </div>
 
@@ -127,89 +198,74 @@ export default function ProductClient({ product }: Props) {
               </h1>
             </div>
 
-            {/* Price & Rating */}
-            <div className="flex items-center gap-4">
-              <span className="text-2xl sm:text-3xl font-light text-gray500">
-                ${price}.00
-              </span>
-              <div className="flex items-center text-amber-500 text-sm">
-                ★★★★★ <span className="text-gray400 ml-1.5">(128 reviews)</span>
-              </div>
-            </div>
-
-            {/* In Stock Badge */}
-            <div>
-              <span className="inline-block bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
-                In Stock & Free Shipping
-              </span>
-            </div>
-
-            {/* Short Description */}
-            <p className="text-gray400 text-sm sm:text-base leading-relaxed">
-              {product.detail}
-            </p>
-
-            {/* Size Spec */}
-            <div className="pt-2">
-              <span className="text-xs uppercase tracking-wider text-gray400 font-medium block mb-1.5">
-                Specification
-              </span>
-              <span className="inline-block px-3 py-1.5 border border-gray300 text-xs text-gray500 font-medium">
-                One Size — Ergonomic Facial Contour
-              </span>
-            </div>
-
-            {/* Quantity & Actions */}
-            <div className="pt-2 space-y-4">
-              <div className="flex items-center gap-4">
-                {/* Quantity selector */}
-                <div className="flex items-center border border-gray300">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentQty(Math.max(1, currentQty - 1))}
-                    className="px-3.5 py-2.5 text-gray500 hover:bg-gray-100 transition-colors"
-                  >
-                    -
-                  </button>
-                  <span className="px-4 py-2.5 text-sm font-medium text-gray500 min-w-10 text-center">
-                    {currentQty}
+            {/* Order / Inquire via Social Media Inbox */}
+            <div className="pt-2 space-y-3.5">
+              <div className="bg-lightgreen border border-emerald-200/80 p-4 sm:p-5 rounded-xs space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase tracking-widest text-emerald-800 font-semibold flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Inquire &amp; Order via Inbox
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentQty(currentQty + 1)}
-                    className="px-3.5 py-2.5 text-gray500 hover:bg-gray-100 transition-colors"
-                  >
-                    +
-                  </button>
+                  <span className="text-[11px] text-emerald-700 font-medium bg-emerald-100/60 px-2 py-0.5 rounded-full">
+                    Fast Reply
+                  </span>
                 </div>
 
-                {/* Add to Cart */}
-                <Button
-                  value={added ? "✓ Added To Cart" : "Add To Cart"}
-                  size="lg"
-                  extraClass={`flex-1 text-center uppercase tracking-widest text-xs font-semibold ${
-                    added ? "bg-emerald-700 text-white" : ""
-                  }`}
-                  onClick={handleAddToCart}
-                />
+                <p className="text-xs sm:text-sm text-gray500 leading-relaxed font-normal">
+                  តបតែតាម fb និង IG ជាមួយ Telegram ណាបងៗ — Contact us directly on social media:
+                </p>
 
-                {/* Wishlist toggle */}
-                <GhostButton onClick={handleWishlist}>
-                  {alreadyWishlisted ? (
-                    <HeartSolid extraClass="size-5 text-red-500" />
-                  ) : (
-                    <Heart extraClass="size-5" />
-                  )}
-                </GhostButton>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  {/* Facebook Order Button */}
+                  <a
+                    href="https://www.facebook.com/chii.shiv"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2.5 bg-[#1877F2] hover:bg-[#166fe5] text-white py-3 px-4 rounded-xs text-xs font-semibold uppercase tracking-wider transition-all shadow-xs hover:shadow-md"
+                  >
+                    <FacebookLogo extraClass="size-4" />
+                    <span>Order on Facebook</span>
+                  </a>
+
+                  {/* Instagram Order Button */}
+                  <a
+                    href="https://www.instagram.com/shiv_chii?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] hover:opacity-95 text-white py-3 px-4 rounded-xs text-xs font-semibold uppercase tracking-wider transition-all shadow-xs hover:shadow-md"
+                  >
+                    <InstagramLogo extraClass="size-4" />
+                    <span>Order on Instagram</span>
+                  </a>
+                </div>
+
+                {/* Direct Contact Phone Link */}
+                <div className="pt-2.5 border-t border-emerald-200/60 flex items-center justify-between text-xs text-gray500">
+                  <div className="flex items-center gap-1.5">
+                    <HugeiconsIcon icon={Call02Icon} className="size-3.5 text-gray400" />
+                    <span>Direct Line:</span>
+                    <a
+                      href="tel:0883979971"
+                      className="font-semibold text-gray700 hover:text-black transition-colors"
+                    >
+                      0883979971
+                    </a>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleWishlist}
+                    aria-label="Toggle wishlist"
+                    className="flex items-center gap-1 text-xs text-gray500 hover:text-red-500 transition-colors"
+                  >
+                    {alreadyWishlisted ? (
+                      <HeartSolid extraClass="size-4 text-red-500" />
+                    ) : (
+                      <Heart extraClass="size-4" />
+                    )}
+                    <span>Wishlist</span>
+                  </button>
+                </div>
               </div>
-
-              <Link
-                href="/checkout"
-                onClick={() => addItem!(currentItem)}
-                className="block w-full text-center py-3 px-6 uppercase tracking-widest text-xs font-semibold border border-gray500 text-gray500 hover:bg-gray500 hover:text-white transition-all duration-300"
-              >
-                Proceed to Checkout
-              </Link>
             </div>
 
             {/* Accordion Details */}
@@ -276,6 +332,101 @@ export default function ProductClient({ product }: Props) {
 
       {/* ===== Footer Section ===== */}
       <Footer />
+
+      {/* ===== PRODUCT IMAGE PREVIEW DIALOG (SHADCN UI) ===== */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="fixed inset-0 top-0 left-0 translate-x-0 translate-y-0 w-screen h-screen h-dvh max-w-none sm:max-w-none rounded-none border-none bg-black/95 p-0 gap-0 overflow-hidden flex items-center justify-center ring-0 z-50"
+        >
+          {/* Accessible Hidden Header */}
+          <DialogHeader className="sr-only">
+            <DialogTitle>{product.name} Image Preview</DialogTitle>
+            <DialogDescription>
+              Viewing image {currentPreviewIndex + 1} of {galleryImages.length}
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Close Button */}
+          <DialogClose
+            render={
+              <ShadcnButton
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full z-30 size-10 sm:size-11 cursor-pointer transition-all"
+              />
+            }
+          >
+            <HugeiconsIcon icon={Cancel01Icon} className="size-5" />
+            <span className="sr-only">Close preview</span>
+          </DialogClose>
+
+          {/* Previous Image Button */}
+          {galleryImages.length > 1 && (
+            <ShadcnButton
+              variant="ghost"
+              size="icon"
+              onClick={handlePrevImage}
+              aria-label="Previous image"
+              className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full z-30 size-11 sm:size-12 cursor-pointer transition-all"
+            >
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-6" />
+            </ShadcnButton>
+          )}
+
+          {/* Next Image Button */}
+          {galleryImages.length > 1 && (
+            <ShadcnButton
+              variant="ghost"
+              size="icon"
+              onClick={handleNextImage}
+              aria-label="Next image"
+              className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full z-30 size-11 sm:size-12 cursor-pointer transition-all"
+            >
+              <HugeiconsIcon icon={ArrowRight01Icon} className="size-6" />
+            </ShadcnButton>
+          )}
+
+          {/* Center Image Container */}
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-4 sm:p-12">
+            <div className="relative w-full max-w-4xl h-[70vh] sm:h-[75vh] max-h-[850px] flex items-center justify-center">
+              <Image
+                src={mainImg}
+                alt={`${product.name} preview`}
+                fill
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                className="object-contain select-none"
+                priority
+              />
+            </div>
+
+            {/* Bottom Thumbnails */}
+            <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2.5 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/15 z-30">
+              {galleryImages.map((imgSrc, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setMainImg(imgSrc)}
+                  className={`relative size-8 sm:size-10 rounded-xs overflow-hidden border transition-all ${
+                    mainImg === imgSrc
+                      ? "border-white scale-110 ring-1 ring-white"
+                      : "border-white/30 opacity-60 hover:opacity-100"
+                  }`}
+                  aria-label={`View image ${idx + 1}`}
+                >
+                  <Image
+                    src={imgSrc}
+                    alt={`Thumbnail ${idx + 1}`}
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

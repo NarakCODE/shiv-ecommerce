@@ -43,3 +43,5 @@ yarn-error.log*
 
 # typescript
 tsconfig.tsbuildinfo
+# next-agents-md
+.next-docs/
