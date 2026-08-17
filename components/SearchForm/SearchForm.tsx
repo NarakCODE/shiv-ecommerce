@@ -1,15 +1,17 @@
+"use client";
+
 import React, { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 import SearchIcon from "../../public/icons/SearchIcon";
-import axios from "axios";
 import { apiProductsType } from "../../context/cart/cart-types";
 import { itemType } from "../../context/wishlist/wishlist-type";
 import Card from "../Card/Card";
 import Loading from "../../public/icons/Loading";
 import GhostButton from "../Buttons/GhostButton";
-import { useRouter } from "next/router";
 
 export default function SearchForm() {
   const t = useTranslations("Navigation");

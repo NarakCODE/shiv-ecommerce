@@ -1,4 +1,6 @@
-import { FC, forwardRef } from "react";
+"use client";
+
+import { FC, ReactNode } from "react";
 
 type Props = {
   extraClass?: string;
@@ -6,6 +8,7 @@ type Props = {
   inverted?: boolean;
   noBorder?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  children?: ReactNode;
 };
 
 // eslint-disable-next-line react/display-name

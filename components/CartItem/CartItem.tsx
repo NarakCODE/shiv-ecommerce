@@ -1,6 +1,9 @@
+"use client";
+
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 import BagIcon from "../../public/icons/BagIcon";
 import Button from "../Buttons/Button";
@@ -8,7 +11,6 @@ import Item from "./Item";
 import LinkButton from "../Buttons/LinkButton";
 import { roundDecimal } from "../Util/utilFunc";
 import { useCart } from "../../context/cart/CartProvider";
-import { useRouter } from "next/router";
 
 export default function CartItem() {
   const router = useRouter();

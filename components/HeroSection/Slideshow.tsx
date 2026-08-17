@@ -1,17 +1,14 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
-import TextButton from "../Buttons/TextButton";
+import Button from "../Buttons/Button";
 import styles from "./Hero.module.css";
 
 // swiperjs
 import { Swiper, SwiperSlide } from "swiper/react";
-
-// import Swiper core and required modules
-import SwiperCore, { Autoplay, Navigation, Pagination } from "swiper/core";
-
-// install Swiper modules
-SwiperCore.use([Pagination, Navigation, Autoplay]);
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
 
 const sliders = [
   {
@@ -53,6 +50,7 @@ const Slideshow = () => {
     <>
       <div className="relative -top-20 slide-container w-full z-20">
         <Swiper
+          modules={[Pagination, Navigation, Autoplay]}
           slidesPerView={1}
           spaceBetween={0}
           loop={true}
@@ -113,7 +111,13 @@ const Slideshow = () => {
                   {slider.titleUp} <br />
                   {slider.titleDown}
                 </span>
-                <TextButton value={t("shop_now")} />
+                <div className="group transition-all flex justify-center w-28 relative">
+                  <Button
+                    value={t("shop_now")}
+                    extraClass="text-gray500 hover:bg-transparent hover:text-gray500 p-2 tracking-normal group-hover:tracking-widest duration-500 bg-transparent border-0"
+                  />
+                  <div className="border-b-2 border-transparent absolute bottom-2 w-2.5 duration-500 group-hover:w-3/4 group-hover:border-gray500 group-hover:duration-500"></div>
+                </div>
               </div>
             </SwiperSlide>
           ))}

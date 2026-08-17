@@ -1,3 +1,4 @@
+@reference "../../styles/globals.css";
 /* Top Bar */
 .topLeftMenu {
   @apply ml-8;

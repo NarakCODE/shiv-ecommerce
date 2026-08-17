@@ -1,4 +1,6 @@
-import { useRouter } from "next/router";
+"use client";
+
+import { useRouter, useParams } from "next/navigation";
 import NextArrow from "../../public/icons/NextArrow";
 import PrevArrow from "../../public/icons/PrevArrow";
 
@@ -6,11 +8,18 @@ type Props = {
   lastPage: number;
   currentPage: number;
   orderby: "latest" | "price" | "price-desc";
+  category?: string;
 };
 
-const Pagination: React.FC<Props> = ({ lastPage, currentPage, orderby }) => {
+const Pagination: React.FC<Props> = ({
+  lastPage,
+  currentPage,
+  orderby,
+  category: propCategory,
+}) => {
   const router = useRouter();
-  const { category } = router.query;
+  const params = useParams();
+  const category = propCategory || params?.category;
 
   let pageNumbers: number[] = [];
 

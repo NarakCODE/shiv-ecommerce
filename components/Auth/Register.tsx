@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FormEvent, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { useTranslations } from "next-intl";

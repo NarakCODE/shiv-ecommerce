@@ -1,5 +1,7 @@
+"use client";
+
 import axios from "axios";
-import { getCookie, removeCookies, setCookies } from "cookies-next";
+import { getCookie, deleteCookie, setCookie } from "cookies-next";
 import React, { useState, useEffect, useContext, createContext } from "react";
 
 type authType = {
@@ -62,13 +64,22 @@ function useProvideAuth() {
   useEffect(() => {
     const initialAuth = getCookie("user");
     if (initialAuth) {
-      const initUser = JSON.parse(initialAuth as string);
-      setUser(initUser);
+      try {
+        const initUser =
+          typeof initialAuth === "string"
+            ? JSON.parse(initialAuth)
+            : initialAuth;
+        setUser(initUser);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, []);
 
   useEffect(() => {
-    setCookies("user", user);
+    if (user) {
+      setCookie("user", JSON.stringify(user));
+    }
   }, [user]);
 
   const register = async (
@@ -174,7 +185,7 @@ function useProvideAuth() {
 
   const logout = () => {
     setUser(null);
-    removeCookies("user");
+    deleteCookie("user");
   };
 
   // Return the user object and auth methods

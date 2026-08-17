@@ -1,0 +1,23 @@
+.sectionContainer {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .sectionContainer {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+.videoWrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: #282828;
+  flex: 1 1 0%;
+  border-radius: 0.125rem;
+  border: 1px solid #e5e7eb;
+  aspect-ratio: 9 / 16;
+  min-height: 280px;
+}

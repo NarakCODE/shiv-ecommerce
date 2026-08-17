@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useContext, useEffect, useReducer } from "react";
 import cartReducer from "./cartReducer";
 import CartContext from "./CartContext";
-import { getCookie, setCookies } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import {
   ADD_ITEM,
   ADD_ONE,
@@ -27,13 +29,20 @@ const useProvideCart = () => {
   useEffect(() => {
     const initialCart = getCookie("cart");
     if (initialCart) {
-      const cartItems = JSON.parse(initialCart as string);
-      dispatch({ type: SET_CART, payload: cartItems });
+      try {
+        const cartItems =
+          typeof initialCart === "string"
+            ? JSON.parse(initialCart)
+            : initialCart;
+        dispatch({ type: SET_CART, payload: cartItems });
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, []);
 
   useEffect(() => {
-    setCookies("cart", state.cart);
+    setCookie("cart", JSON.stringify(state.cart));
   }, [state.cart]);
 
   const addItem = (item: itemType) => {

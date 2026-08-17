@@ -1,5 +1,7 @@
+"use client";
+
 import { useContext, useEffect, useReducer } from "react";
-import { getCookie, setCookies } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 
 import wishlistReducer from "./wishlistReducer";
 import WishlistContext from "./WishlistContext";
@@ -34,13 +36,20 @@ const useProvideWishlist = () => {
   useEffect(() => {
     const initialWishlist = getCookie("wishlist");
     if (initialWishlist) {
-      const wishlistItems = JSON.parse(initialWishlist as string);
-      dispatch({ type: SET_WISHLIST, payload: wishlistItems });
+      try {
+        const wishlistItems =
+          typeof initialWishlist === "string"
+            ? JSON.parse(initialWishlist)
+            : initialWishlist;
+        dispatch({ type: SET_WISHLIST, payload: wishlistItems });
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, []);
 
   useEffect(() => {
-    setCookies("wishlist", state.wishlist);
+    setCookie("wishlist", JSON.stringify(state.wishlist));
   }, [state.wishlist]);
 
   const addToWishlist = (item: itemType) => {

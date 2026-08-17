@@ -1,10 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import FacebookLogo from "../../public/icons/FacebookLogo";
 import InstagramLogo from "../../public/icons/InstagramLogo";
-import Button from "../Buttons/Button";
 import Input from "../Input/Input";
+import Button from "../Buttons/Button";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -17,33 +19,27 @@ export default function Footer() {
           <div>
             <h3 className={styles.footerHead}>{t("company")}</h3>
             <div className={styles.column}>
-              <a href="example">{t("about_us")}</a>
-              <a href="example">{t("contact_us")}</a>
-              <a href="example">{t("store_location")}</a>
-              <a href="example">{t("careers")}</a>
+              <a href="#">{t("about_us")}</a>
+              <a href="#">{t("contact_us")}</a>
+              <a href="#">{t("store_location")}</a>
+              <a href="#">{t("careers")}</a>
             </div>
           </div>
           <div>
             <h3 className={styles.footerHead}>{t("help")}</h3>
             <div className={styles.column}>
-              <a href="example">{t("order_tracking")}</a>
-              <a href="example">{t("faqs")}</a>
-              <a href="example">{t("privacy_policy")}</a>
-              <a href="example">{t("terms_conditions")}</a>
+              <a href="#">{t("order_tracking")}</a>
+              <a href="#">{t("faqs")}</a>
+              <a href="#">{t("privacy_policy")}</a>
+              <a href="#">{t("terms_conditions")}</a>
             </div>
           </div>
           <div>
             <h3 className={styles.footerHead}>{t("store")}</h3>
             <div className={styles.column}>
-              <Link href={`/product-category/women`}>
-                <a>{t("women")}</a>
-              </Link>
-              <Link href={`/product-category/men`}>
-                <a>{t("men")}</a>
-              </Link>
-              <Link href={`/product-category/bags`}>
-                <a>{t("bags")}</a>
-              </Link>
+              <Link href={`/product-category/women`}>{t("women")}</Link>
+              <Link href={`/product-category/men`}>{t("men")}</Link>
+              <Link href={`/product-category/bags`}>{t("bags")}</Link>
             </div>
           </div>
           <div>
@@ -75,9 +71,9 @@ export default function Footer() {
             extraClass=" w-full sm:w-auto"
           />{" "}
           <Button
-            size="lg"
             value={t("send")}
-            extraClass="ml-0 mt-4 sm:mt-0 tracking-widest sm:tracking-normal sm:mt-0 sm:ml-4 w-auto w-full sm:w-auto"
+            size="lg"
+            extraClass="mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto"
           />
         </div>
       </div>
@@ -89,13 +85,13 @@ export default function Footer() {
               {t("follow_us_on_social_media")}:
             </span>{" "}
             <a
-              href="www.facebook.com"
+              href="https://www.facebook.com"
               aria-label="Facebook Page for Haru Fashion"
             >
               <FacebookLogo />
             </a>
             <a
-              href="www.ig.com"
+              href="https://www.instagram.com"
               aria-label="Instagram Account for Haru Fashion"
             >
               <InstagramLogo />

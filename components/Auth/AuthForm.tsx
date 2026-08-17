@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, useState, FC } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useTranslations } from "next-intl";

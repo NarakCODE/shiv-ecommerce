@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useCallback, useEffect, useState } from "react";
 import LeftArrow from "../../public/icons/LeftArrow";
 import RightArrow from "../../public/icons/RightArrow";
