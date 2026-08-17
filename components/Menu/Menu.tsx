@@ -17,6 +17,7 @@ import SearchIcon from "../../public/icons/SearchIcon";
 import DownArrow from "../../public/icons/DownArrow";
 import InstagramLogo from "../../public/icons/InstagramLogo";
 import FacebookLogo from "../../public/icons/FacebookLogo";
+import TiktokLogo from "../../public/icons/TiktokLogo";
 import { useWishlist } from "../../context/wishlist/WishlistProvider";
 import { useAuth } from "../../context/AuthContext";
 
@@ -284,20 +285,33 @@ export default function Menu() {
                       </HMenu.Items>
                     </HMenu>
 
-                    <div className="flex my-10 w-2/5 space-x-6 justify-center">
+                    <div className="flex my-8 w-3/5 space-x-6 justify-center items-center">
                       <a
-                        href="#"
-                        className="text-gray400 w-10 h-10 py-1 px-auto flex justify-center rounded-md active:bg-gray300"
-                        aria-label="Haru Fashion Facebook Page"
+                        href="https://www.facebook.com/chii.shiv"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray400 hover:text-gray500 w-10 h-10 py-1 flex justify-center items-center rounded-md active:bg-gray300 transition-colors"
+                        aria-label="Facebook Page"
                       >
-                        <FacebookLogo extraClass="h-8" />
+                        <FacebookLogo extraClass="h-6" />
                       </a>
                       <a
-                        href="#"
-                        className="text-gray400 w-10 h-10 py-1 px-auto flex justify-center rounded-md active:bg-gray300"
-                        aria-label="Haru Fashion Instagram Account"
+                        href="https://www.instagram.com/shiv_chii?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray400 hover:text-gray500 w-10 h-10 py-1 flex justify-center items-center rounded-md active:bg-gray300 transition-colors"
+                        aria-label="Instagram Account"
                       >
-                        <InstagramLogo extraClass="h-8" />
+                        <InstagramLogo extraClass="h-6" />
+                      </a>
+                      <a
+                        href="https://www.tiktok.com/@chiishiv09?is_from_webapp=1&sender_device=pc"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray400 hover:text-gray500 w-10 h-10 py-1 flex justify-center items-center rounded-md active:bg-gray300 transition-colors"
+                        aria-label="TikTok Profile"
+                      >
+                        <TiktokLogo extraClass="h-6" />
                       </a>
                     </div>
                   </div>

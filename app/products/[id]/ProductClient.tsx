@@ -17,6 +17,7 @@ import { useWishlist } from "../../../context/wishlist/WishlistProvider";
 import DownArrow from "../../../public/icons/DownArrow";
 import FacebookLogo from "../../../public/icons/FacebookLogo";
 import InstagramLogo from "../../../public/icons/InstagramLogo";
+import TiktokLogo from "../../../public/icons/TiktokLogo";
 import Heart from "../../../public/icons/Heart";
 import HeartSolid from "../../../public/icons/HeartSolid";
 
@@ -238,10 +239,35 @@ export default function ProductClient({ product }: Props) {
 
             <div className="flex items-center space-x-4 pt-2">
               <span className="text-xs uppercase tracking-wider text-gray400">
-                Share:
+                Follow &amp; Share:
               </span>
-              <FacebookLogo extraClass="h-4 cursor-pointer text-gray400 hover:text-gray500" />
-              <InstagramLogo extraClass="h-4 cursor-pointer text-gray400 hover:text-gray500" />
+              <a
+                href="https://www.facebook.com/chii.shiv"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook Profile"
+                className="text-gray400 hover:text-gray500 transition-colors"
+              >
+                <FacebookLogo extraClass="h-4" />
+              </a>
+              <a
+                href="https://www.instagram.com/shiv_chii?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram Profile"
+                className="text-gray400 hover:text-gray500 transition-colors"
+              >
+                <InstagramLogo extraClass="h-4" />
+              </a>
+              <a
+                href="https://www.tiktok.com/@chiishiv09?is_from_webapp=1&sender_device=pc"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok Profile"
+                className="text-gray400 hover:text-gray500 transition-colors"
+              >
+                <TiktokLogo extraClass="h-4" />
+              </a>
             </div>
           </div>
         </div>

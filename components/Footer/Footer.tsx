@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import FacebookLogo from "../../public/icons/FacebookLogo";
 import InstagramLogo from "../../public/icons/InstagramLogo";
+import TiktokLogo from "../../public/icons/TiktokLogo";
 import Input from "../Input/Input";
 import Button from "../Buttons/Button";
 import styles from "./Footer.module.css";
@@ -19,19 +20,19 @@ export default function Footer() {
           <div>
             <h3 className={styles.footerHead}>{t("company")}</h3>
             <div className={styles.column}>
-              <a href="#">{t("about_us")}</a>
-              <a href="#">{t("contact_us")}</a>
-              <a href="#">{t("store_location")}</a>
-              <a href="#">{t("careers")}</a>
+              <a href="/coming-soon">{t("about_us")}</a>
+              <a href="/coming-soon">{t("contact_us")}</a>
+              <a href="/coming-soon">{t("store_location")}</a>
+              <a href="/coming-soon">{t("careers")}</a>
             </div>
           </div>
           <div>
             <h3 className={styles.footerHead}>{t("help")}</h3>
             <div className={styles.column}>
-              <a href="#">{t("order_tracking")}</a>
-              <a href="#">{t("faqs")}</a>
-              <a href="#">{t("privacy_policy")}</a>
-              <a href="#">{t("terms_conditions")}</a>
+              <a href="/coming-soon">{t("order_tracking")}</a>
+              <a href="/coming-soon">{t("faqs")}</a>
+              <a href="/coming-soon">{t("privacy_policy")}</a>
+              <a href="/coming-soon">{t("terms_conditions")}</a>
             </div>
           </div>
           <div>
@@ -60,42 +61,59 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col items-center pb-16">
-        <h4 className="text-3xl mb-4">{t("newsletter")}</h4>
-        <span className="px-6 text-center">{t("newsletter_desc")}</span>
-        <div className="mt-5 px-6 flex w-full sm:w-auto flex-col sm:flex-row">
-          <Input
-            label="Newsletter Input Box"
-            name="email"
-            type="email"
-            extraClass=" w-full sm:w-auto"
-          />{" "}
-          <Button
-            value={t("send")}
-            size="lg"
-            extraClass="mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto"
-          />
+        <div className="w-full flex flex-col items-center justify-center pt-12">
+          <span className="text-xl mb-4">{t("newsletter")}</span>
+          <span className="text-gray400 text-sm mb-6 text-center">
+            {t("newsletter_desc")}
+          </span>
+          <div className="flex w-11/12 md:w-3/5 lg:w-2/5">
+            <Input
+              type="text"
+              name="newsletter"
+              placeholder={t("email_address")}
+              extraClass="bg-white"
+            />
+            <Button
+              size="sm"
+              value={t("send")}
+              extraClass="ml-2 uppercase tracking-wider"
+            />
+          </div>
         </div>
       </div>
       <div className={styles.bottomFooter}>
-        <div className="app-max-width app-x-padding w-full flex justify-between">
-          <span className="">@2022 Haru. {t("all_rights_reserved")}</span>
-          <span className="flex items-center">
-            <span className="hidden sm:block">
+        <div className="app-max-width app-x-padding w-full flex justify-between items-center">
+          <span className="">@2026 Haru. {t("all_rights_reserved")}</span>
+          <span className="flex items-center space-x-3">
+            <span className="hidden sm:block mr-1">
               {t("follow_us_on_social_media")}:
             </span>{" "}
             <a
-              href="https://www.facebook.com"
-              aria-label="Facebook Page for Haru Fashion"
+              href="https://www.facebook.com/chii.shiv"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook Page"
+              className="hover:text-gray-300 transition-colors"
             >
               <FacebookLogo />
             </a>
             <a
-              href="https://www.instagram.com"
-              aria-label="Instagram Account for Haru Fashion"
+              href="https://www.instagram.com/shiv_chii?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram Account"
+              className="hover:text-gray-300 transition-colors"
             >
               <InstagramLogo />
+            </a>
+            <a
+              href="https://www.tiktok.com/@chiishiv09?is_from_webapp=1&sender_device=pc"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok Profile"
+              className="hover:text-gray-300 transition-colors"
+            >
+              <TiktokLogo />
             </a>
           </span>
         </div>
