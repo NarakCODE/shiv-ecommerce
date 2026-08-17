@@ -4,14 +4,6 @@ import React, { Fragment, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from "@/components/ui/carousel";
 
 import styles from "./HowToUse.module.css";
 
@@ -19,60 +11,46 @@ type Props = {
   extraClass?: string;
 };
 
-type MediaItem = {
+type VideoItem = {
   id: string;
-  type: "video" | "image";
   title: string;
-  subtitle?: string;
+  subtitle: string;
   src: string;
-  poster?: string;
-  alt?: string;
 };
 
-const videos: MediaItem[] = [
+const videos: VideoItem[] = [
   {
     id: "vid-1",
-    type: "video",
     title: "Technique 1: Neck & Lymphatic Drainage",
     subtitle: "Neck & Collarbone Ritual",
     src: "/videos/how-to-use-1.mp4",
-    poster: "/slider/slider-1.jpg",
   },
   {
     id: "vid-2",
-    type: "video",
     title: "Technique 2: Jawline Definition",
     subtitle: "Jaw Contouring & Sculpting",
     src: "/videos/how-to-use-2.mp4",
-    poster: "/slider/slider-2.jpg",
   },
   {
     id: "vid-3",
-    type: "video",
     title: "Technique 3: Cheeks & Temples",
     subtitle: "Cheek Depuffing & Lifting",
     src: "/videos/how-to-use-3.mp4",
-    poster: "/slider/slider-3.jpg",
   },
   {
     id: "vid-4",
-    type: "video",
     title: "Technique 4: Eyes & Forehead",
     subtitle: "Eye Contour & Forehead Relaxation",
     src: "/videos/how-to-use-4.mp4",
-    poster: "/slider/slider-4.jpg",
   },
 ];
 
 const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [modalApi, setModalApi] = useState<CarouselApi>();
-  const [currentModalSlide, setCurrentModalSlide] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const openModalAt = (index: number) => {
-    setSelectedIndex(index);
-    setCurrentModalSlide(index);
+    setCurrentIndex(index);
     setIsOpen(true);
   };
 
@@ -80,30 +58,27 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
     setIsOpen(false);
   }, []);
 
-  useEffect(() => {
-    if (!modalApi) return;
-    modalApi.scrollTo(selectedIndex, true);
+  const prevVideo = () => {
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : videos.length - 1));
+  };
 
-    const onSelect = () => {
-      setCurrentModalSlide(modalApi.selectedScrollSnap());
-    };
+  const nextVideo = () => {
+    setCurrentIndex((prev) => (prev < videos.length - 1 ? prev + 1 : 0));
+  };
 
-    modalApi.on("select", onSelect);
-    return () => {
-      modalApi.off("select", onSelect);
-    };
-  }, [modalApi, selectedIndex, isOpen]);
-
-  // Handle escape key listener
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        closeModal();
-      }
+      if (!isOpen) return;
+      if (e.key === "Escape") closeModal();
+      if (e.key === "ArrowLeft") prevVideo();
+      if (e.key === "ArrowRight") nextVideo();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, closeModal]);
+
+  const activeVideo = videos[currentIndex];
 
   return (
     <>
@@ -324,14 +299,14 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
               <div className={styles.modalHeader}>
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="size-8 sm:size-9 rounded-full bg-white/10 flex items-center justify-center border border-white/20 text-white font-medium text-xs sm:text-sm">
-                    {currentModalSlide + 1}
+                    {currentIndex + 1}
                   </div>
                   <div>
                     <h3 className="text-sm sm:text-base md:text-lg font-medium text-white tracking-wide">
-                      {videos[currentModalSlide]?.title}
+                      {activeVideo.title}
                     </h3>
                     <p className="text-xs text-gray-400">
-                      Blue Lagoon Skincare Ritual • Technique {currentModalSlide + 1} of{" "}
+                      Blue Lagoon Skincare Ritual • Video {currentIndex + 1} of{" "}
                       {videos.length}
                     </p>
                   </div>
@@ -362,74 +337,88 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                 </div>
               </div>
 
-              {/* Full Page Main Body: shadcn Carousel */}
+              {/* Full Page Main Body: Video Player with Next/Prev Arrows */}
               <div className={styles.modalBody}>
-                <Carousel
-                  setApi={setModalApi}
-                  opts={{
-                    align: "center",
-                    loop: true,
-                    startIndex: selectedIndex,
-                  }}
-                  className="w-full h-full flex items-center justify-center"
+                {/* Previous Button */}
+                <button
+                  type="button"
+                  onClick={prevVideo}
+                  className="absolute left-3 sm:left-6 md:left-10 z-30 size-11 sm:size-14 rounded-full bg-black/60 hover:bg-white text-white hover:text-black border border-white/20 backdrop-blur-md shadow-2xl transition-all flex items-center justify-center focus:outline-none"
+                  aria-label="Previous video technique"
                 >
-                  <CarouselContent className="h-full -ml-0">
-                    {videos.map((item, idx) => (
-                      <CarouselItem
-                        key={item.id}
-                        className="relative w-full h-full pl-0 min-w-full flex items-center justify-center"
-                      >
-                        <div className={styles.modalSlideMedia}>
-                          <video
-                            key={item.src}
-                            src={item.src}
-                            controls
-                            autoPlay={currentModalSlide === idx}
-                            loop
-                            playsInline
-                            className="w-full h-full max-h-full object-contain rounded-md shadow-2xl"
-                            aria-label={item.title}
-                          />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="size-5 sm:size-6"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </button>
 
-                  {/* Navigation Arrows */}
-                  <CarouselPrevious className="left-3 sm:left-6 md:left-10 size-11 sm:size-14 bg-black/60 hover:bg-white text-white hover:text-black border border-white/20 backdrop-blur-md shadow-2xl transition-all" />
-                  <CarouselNext className="right-3 sm:right-6 md:right-10 size-11 sm:size-14 bg-black/60 hover:bg-white text-white hover:text-black border border-white/20 backdrop-blur-md shadow-2xl transition-all" />
-                </Carousel>
+                {/* Video Media */}
+                <div className={styles.modalSlideMedia}>
+                  <video
+                    key={activeVideo.src}
+                    src={activeVideo.src}
+                    controls
+                    autoPlay
+                    loop
+                    playsInline
+                    className="w-full h-full max-h-full object-contain rounded-md shadow-2xl"
+                    aria-label={activeVideo.title}
+                  />
+                </div>
+
+                {/* Next Button */}
+                <button
+                  type="button"
+                  onClick={nextVideo}
+                  className="absolute right-3 sm:right-6 md:right-10 z-30 size-11 sm:size-14 rounded-full bg-black/60 hover:bg-white text-white hover:text-black border border-white/20 backdrop-blur-md shadow-2xl transition-all flex items-center justify-center focus:outline-none"
+                  aria-label="Next video technique"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="size-5 sm:size-6"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
               </div>
 
-              {/* Full Page Bottom Bar: Quick Thumbnails & Action */}
+              {/* Full Page Bottom Bar */}
               <div className={styles.modalFooter}>
-                <div className="flex items-center gap-2 overflow-x-auto max-w-full py-1">
-                  {videos.map((item, idx) => (
+                <div className="flex items-center gap-2">
+                  {videos.map((vid, idx) => (
                     <button
-                      key={item.id}
+                      key={vid.id}
                       type="button"
-                      onClick={() => modalApi?.scrollTo(idx)}
-                      className={`${styles.thumbnailBtn} ${
-                        currentModalSlide === idx
-                          ? styles.thumbnailBtnActive
-                          : "hover:opacity-80"
+                      onClick={() => setCurrentIndex(idx)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all border ${
+                        currentIndex === idx
+                          ? "bg-white text-black border-white"
+                          : "bg-white/10 text-gray-300 border-white/15 hover:bg-white/20"
                       }`}
-                      aria-label={`Jump to ${item.title}`}
+                      aria-label={`Jump to ${vid.title}`}
                     >
-                      <Image
-                        src={item.poster || "/slider/slider-1.jpg"}
-                        alt={item.title}
-                        fill
-                        sizes="44px"
-                        className="object-cover"
-                      />
+                      Step {idx + 1}
                     </button>
                   ))}
                 </div>
 
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-xs text-gray-400 hidden sm:inline">
-                    {currentModalSlide + 1} / {videos.length}
+                    {currentIndex + 1} / {videos.length}
                   </span>
                   <Link
                     href="/products/1"

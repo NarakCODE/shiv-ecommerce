@@ -104,31 +104,3 @@
     gap: 0.5rem;
   }
 }
-
-.dotIndicator {
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 9999px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  border: 0;
-  padding: 0;
-}
-
-.thumbnailBtn {
-  position: relative;
-  width: 2.75rem;
-  height: 3.75rem;
-  border-radius: 0.25rem;
-  overflow: hidden;
-  border: 1.5px solid transparent;
-  opacity: 0.5;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.thumbnailBtnActive {
-  opacity: 1;
-  border-color: #ffffff;
-  transform: scale(1.08);
-}
