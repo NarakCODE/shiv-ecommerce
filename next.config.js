@@ -13,7 +13,20 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   images: {
-    domains: ["robohash.org", "res.cloudinary.com", "skinscience.bluelagoon.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "robohash.org",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "skinscience.bluelagoon.com",
+      },
+    ],
   },
 };
 
