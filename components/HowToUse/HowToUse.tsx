@@ -2,6 +2,9 @@
 
 import React from "react";
 import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+
 import styles from "./HowToUse.module.css";
 
 type Props = {
@@ -11,19 +14,33 @@ type Props = {
 const videos = [
   {
     id: 1,
-    title: "Neck & Jawline",
-    src: "/videos/how-to-use.mp4",
+    title: "Technique 1",
+    src: "/videos/how-to-use-1.mp4",
   },
   {
     id: 2,
-    title: "Cheeks & Sculpting",
+    title: "Technique 2",
     src: "/videos/how-to-use-2.mp4",
   },
   {
     id: 3,
-    title: "Eyes & Forehead",
+    title: "Technique 3",
     src: "/videos/how-to-use-3.mp4",
   },
+  {
+    id: 4,
+    title: "Technique 4",
+    src: "/videos/how-to-use-4.mp4",
+  },
+];
+
+const sliderImages = [
+  { id: 1, src: "/slider/slider-1.jpg", alt: "Gua Sha Ritual Slide 1" },
+  { id: 2, src: "/slider/slider-2.jpg", alt: "Gua Sha Ritual Slide 2" },
+  { id: 3, src: "/slider/slider-3.jpg", alt: "Gua Sha Ritual Slide 3" },
+  { id: 4, src: "/slider/slider-4.jpg", alt: "Gua Sha Ritual Slide 4" },
+  { id: 5, src: "/slider/slider-5.jpg", alt: "Gua Sha Ritual Slide 5" },
+  { id: 6, src: "/slider/slider-6.jpg", alt: "Gua Sha Ritual Slide 6" },
 ];
 
 const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
@@ -167,13 +184,14 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
           </div>
         </div>
 
-        {/* ===== 3-Column Videos Grid at Bottom (1 Col on Mobile) ===== */}
+        {/* ===== Videos & Carousel Grid at Bottom ===== */}
         <div className="mt-14 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {/* Video Items */}
             {videos.map((vid) => (
               <div
                 key={vid.id}
-                className="flex flex-col bg-white border border-gray200 p-4 h-full"
+                className="flex flex-col bg-white border border-gray200 p-3 sm:p-4 h-full shadow-xs"
               >
                 <div className={styles.videoWrapper}>
                   <video
@@ -188,6 +206,39 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                 </div>
               </div>
             ))}
+
+            {/* Last Item: Carousel Component with /slider images */}
+            <div className="flex flex-col bg-white border border-gray200 p-3 sm:p-4 h-full shadow-xs">
+              <div className={styles.carouselWrapper}>
+                <Swiper
+                  modules={[Autoplay, Pagination, Navigation]}
+                  slidesPerView={1}
+                  spaceBetween={0}
+                  loop={true}
+                  autoplay={{
+                    delay: 3500,
+                    disableOnInteraction: false,
+                  }}
+                  pagination={{
+                    clickable: true,
+                  }}
+                  navigation={true}
+                  className={styles.sliderSwiper}
+                >
+                  {sliderImages.map((img) => (
+                    <SwiperSlide key={img.id} className="relative w-full h-full">
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
+                        className="w-full h-full object-cover"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            </div>
           </div>
         </div>
       </div>
