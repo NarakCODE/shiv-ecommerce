@@ -2,8 +2,14 @@
 
 import React from "react";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 import styles from "./HowToUse.module.css";
 
@@ -207,36 +213,41 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
               </div>
             ))}
 
-            {/* Last Item: Carousel Component with /slider images */}
+            {/* Last Item: shadcn Carousel Component with /slider images */}
             <div className="flex flex-col bg-white border border-gray200 p-3 sm:p-4 h-full shadow-xs">
               <div className={styles.carouselWrapper}>
-                <Swiper
-                  modules={[Autoplay, Pagination, Navigation]}
-                  slidesPerView={1}
-                  spaceBetween={0}
-                  loop={true}
-                  autoplay={{
-                    delay: 3500,
-                    disableOnInteraction: false,
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
                   }}
-                  pagination={{
-                    clickable: true,
-                  }}
-                  navigation={true}
-                  className={styles.sliderSwiper}
+                  plugins={[
+                    Autoplay({
+                      delay: 3500,
+                      stopOnInteraction: false,
+                    }),
+                  ]}
+                  className="w-full h-full"
                 >
-                  {sliderImages.map((img) => (
-                    <SwiperSlide key={img.id} className="relative w-full h-full">
-                      <Image
-                        src={img.src}
-                        alt={img.alt}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
-                        className="w-full h-full object-cover"
-                      />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                  <CarouselContent className="h-full -ml-0">
+                    {sliderImages.map((img) => (
+                      <CarouselItem
+                        key={img.id}
+                        className="relative w-full h-full pl-0 min-w-full"
+                      >
+                        <Image
+                          src={img.src}
+                          alt={img.alt}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
+                          className="w-full h-full object-cover"
+                        />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
               </div>
             </div>
           </div>
