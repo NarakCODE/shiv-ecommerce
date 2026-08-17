@@ -1,7 +1,8 @@
 "use client";
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   Carousel,
@@ -25,6 +26,7 @@ type MediaItem = {
   title: string;
   subtitle?: string;
   src: string;
+  poster?: string;
   alt?: string;
 };
 
@@ -33,29 +35,33 @@ const videos: MediaItem[] = [
     id: "vid-1",
     type: "video",
     title: "Technique 1: Neck & Lymphatic Drainage",
-    subtitle: "Neck Massage",
+    subtitle: "Neck & Collarbone Ritual",
     src: "/videos/how-to-use-1.mp4",
+    poster: "/slider/slider-1.jpg",
   },
   {
     id: "vid-2",
     type: "video",
     title: "Technique 2: Jawline Definition",
-    subtitle: "Jaw Sculpting",
+    subtitle: "Jaw Contouring & Sculpting",
     src: "/videos/how-to-use-2.mp4",
+    poster: "/slider/slider-2.jpg",
   },
   {
     id: "vid-3",
     type: "video",
     title: "Technique 3: Cheeks & Temples",
-    subtitle: "Cheek Depuffing",
+    subtitle: "Cheek Depuffing & Lifting",
     src: "/videos/how-to-use-3.mp4",
+    poster: "/slider/slider-3.jpg",
   },
   {
     id: "vid-4",
     type: "video",
     title: "Technique 4: Eyes & Forehead",
-    subtitle: "Eye & Forehead Lift",
+    subtitle: "Eye Contour & Forehead Relaxation",
     src: "/videos/how-to-use-4.mp4",
+    poster: "/slider/slider-4.jpg",
   },
 ];
 
@@ -64,6 +70,7 @@ const sliderImages: MediaItem[] = [
     id: "img-1",
     type: "image",
     title: "Ritual Guide: Step by Step",
+    subtitle: "Step 1 Prep",
     src: "/slider/slider-1.jpg",
     alt: "Gua Sha Ritual Guide 1",
   },
@@ -71,6 +78,7 @@ const sliderImages: MediaItem[] = [
     id: "img-2",
     type: "image",
     title: "Skin Anatomy & Pressure Points",
+    subtitle: "Facial Anatomy",
     src: "/slider/slider-2.jpg",
     alt: "Gua Sha Ritual Guide 2",
   },
@@ -78,6 +86,7 @@ const sliderImages: MediaItem[] = [
     id: "img-3",
     type: "image",
     title: "Daily Lifting & Sculpting Guide",
+    subtitle: "Daily Technique",
     src: "/slider/slider-3.jpg",
     alt: "Gua Sha Ritual Guide 3",
   },
@@ -85,6 +94,7 @@ const sliderImages: MediaItem[] = [
     id: "img-4",
     type: "image",
     title: "Product Layering & Benefits",
+    subtitle: "Serum & Oil Layering",
     src: "/slider/slider-4.jpg",
     alt: "Gua Sha Ritual Guide 4",
   },
@@ -92,6 +102,7 @@ const sliderImages: MediaItem[] = [
     id: "img-5",
     type: "image",
     title: "Firming & Glow Results",
+    subtitle: "Proven Benefits",
     src: "/slider/slider-5.jpg",
     alt: "Gua Sha Ritual Guide 5",
   },
@@ -99,6 +110,7 @@ const sliderImages: MediaItem[] = [
     id: "img-6",
     type: "image",
     title: "Care & Cleansing Guide",
+    subtitle: "Stone Cleansing",
     src: "/slider/slider-6.jpg",
     alt: "Gua Sha Ritual Guide 6",
   },
@@ -118,9 +130,9 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
     setIsOpen(true);
   };
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsOpen(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (!modalApi) return;
@@ -135,6 +147,17 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
       modalApi.off("select", onSelect);
     };
   }, [modalApi, selectedIndex, isOpen]);
+
+  // Handle escape key listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        closeModal();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, closeModal]);
 
   return (
     <>
@@ -161,7 +184,7 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
               alt="How To Use the Blue Lagoon Skincare Gua Sha Tool"
               width={1296}
               height={729}
-              sizes="100vw"
+              sizes="(max-width: 1296px) 100vw, 1296px"
               priority
               className="w-full h-auto object-cover"
             />
@@ -324,7 +347,7 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                           <path d="M21 3l-7 7" />
                           <path d="M3 21l7-7" />
                         </svg>
-                        Full Preview
+                        Full Web Preview
                       </span>
                     </div>
                   </div>
@@ -391,7 +414,7 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                         <path d="M21 3l-7 7" />
                         <path d="M3 21l7-7" />
                       </svg>
-                      Full Preview
+                      Full Web Preview
                     </span>
                   </div>
                 </div>
@@ -401,14 +424,13 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
         </div>
       </section>
 
-      {/* ===== Full Preview Dialog / Modal with Carousel ===== */}
+      {/* ===== FULL WEB PAGE PREVIEW DIALOG ===== */}
       <Transition show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-50 overflow-y-auto"
+          className="fixed inset-0 z-50 overflow-hidden"
           onClose={closeModal}
         >
-          {/* Backdrop Overlay */}
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -418,37 +440,32 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className={styles.modalOverlay} />
-          </Transition.Child>
-
-          {/* Modal Container */}
-          <div className={styles.modalContainer}>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className={styles.modalPanel}>
-                {/* Modal Header */}
-                <div className={styles.modalHeader}>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3">
-                    <Dialog.Title className="text-base sm:text-lg font-medium text-white tracking-wide">
-                      {allMediaItems[currentModalSlide]?.title}
-                    </Dialog.Title>
-                    <span className="text-xs text-gray400">
-                      ({currentModalSlide + 1} / {allMediaItems.length})
-                    </span>
+            <Dialog.Panel className={styles.fullPageModal}>
+              {/* Full Page Header */}
+              <div className={styles.modalHeader}>
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="size-8 sm:size-9 rounded-full bg-white/10 flex items-center justify-center border border-white/20 text-white font-medium text-xs sm:text-sm">
+                    {currentModalSlide + 1}
                   </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base md:text-lg font-medium text-white tracking-wide">
+                      {allMediaItems[currentModalSlide]?.title}
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      Blue Lagoon Skincare Ritual • Item {currentModalSlide + 1} of{" "}
+                      {allMediaItems.length}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="p-1.5 text-gray300 hover:text-white hover:bg-gray-700 rounded-full transition-colors focus:outline-none"
-                    aria-label="Close dialog"
+                    className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all border border-white/20 focus:outline-none"
+                    aria-label="Close full page preview"
                   >
+                    <span>Close</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -457,80 +474,110 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="size-5"
+                      className="size-4"
                     >
                       <path d="M18 6 6 18" />
                       <path d="m6 6 12 12" />
                     </svg>
                   </button>
                 </div>
+              </div>
 
-                {/* Modal Body: shadcn Carousel */}
-                <div className={styles.modalBody}>
-                  <Carousel
-                    setApi={setModalApi}
-                    opts={{
-                      align: "center",
-                      loop: true,
-                      startIndex: selectedIndex,
-                    }}
-                    className="w-full h-full"
-                  >
-                    <CarouselContent className="h-full -ml-0">
-                      {allMediaItems.map((item, idx) => (
-                        <CarouselItem
-                          key={item.id}
-                          className="relative w-full h-full pl-0 min-w-full flex items-center justify-center"
-                        >
-                          <div className={styles.modalSlideMedia}>
-                            {item.type === "video" ? (
-                              <video
-                                key={item.src}
-                                src={item.src}
-                                controls
-                                autoPlay={currentModalSlide === idx}
-                                playsInline
-                                className="w-full h-full object-contain rounded-md"
-                                aria-label={item.title}
-                              />
-                            ) : (
+              {/* Full Page Main Body: shadcn Carousel */}
+              <div className={styles.modalBody}>
+                <Carousel
+                  setApi={setModalApi}
+                  opts={{
+                    align: "center",
+                    loop: true,
+                    startIndex: selectedIndex,
+                  }}
+                  className="w-full h-full flex items-center justify-center"
+                >
+                  <CarouselContent className="h-full -ml-0">
+                    {allMediaItems.map((item, idx) => (
+                      <CarouselItem
+                        key={item.id}
+                        className="relative w-full h-full pl-0 min-w-full flex items-center justify-center"
+                      >
+                        <div className={styles.modalSlideMedia}>
+                          {item.type === "video" ? (
+                            <video
+                              key={item.src}
+                              src={item.src}
+                              controls
+                              autoPlay={currentModalSlide === idx}
+                              loop
+                              playsInline
+                              className="w-full h-full max-h-full object-contain rounded-md shadow-2xl"
+                              aria-label={item.title}
+                            />
+                          ) : (
+                            <div className="relative w-full h-full flex items-center justify-center">
                               <Image
                                 src={item.src}
                                 alt={item.alt || item.title}
                                 fill
-                                sizes="(max-width: 768px) 100vw, 800px"
+                                sizes="100vw"
                                 className="object-contain rounded-md"
-                                priority={Math.abs(currentModalSlide - idx) <= 1}
+                                priority={
+                                  Math.abs(currentModalSlide - idx) <= 1
+                                }
                               />
-                            )}
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="left-2 sm:left-4 bg-black/60 hover:bg-black text-white" />
-                    <CarouselNext className="right-2 sm:right-4 bg-black/60 hover:bg-black text-white" />
-                  </Carousel>
-                </div>
+                            </div>
+                          )}
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
 
-                {/* Modal Footer: Quick Jump Dot Indicators */}
-                <div className={styles.modalFooter}>
+                  {/* Navigation Arrows */}
+                  <CarouselPrevious className="left-3 sm:left-6 md:left-10 size-11 sm:size-14 bg-black/60 hover:bg-white text-white hover:text-black border border-white/20 backdrop-blur-md shadow-2xl transition-all" />
+                  <CarouselNext className="right-3 sm:right-6 md:right-10 size-11 sm:size-14 bg-black/60 hover:bg-white text-white hover:text-black border border-white/20 backdrop-blur-md shadow-2xl transition-all" />
+                </Carousel>
+              </div>
+
+              {/* Full Page Bottom Bar: Quick Thumbnails & Action */}
+              <div className={styles.modalFooter}>
+                <div className="flex items-center gap-2 overflow-x-auto max-w-full py-1">
                   {allMediaItems.map((item, idx) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => modalApi?.scrollTo(idx)}
-                      className={`${styles.dotIndicator} ${
+                      className={`${styles.thumbnailBtn} ${
                         currentModalSlide === idx
-                          ? "bg-white scale-125"
-                          : "bg-gray-600 hover:bg-gray-400"
+                          ? styles.thumbnailBtnActive
+                          : "hover:opacity-80"
                       }`}
-                      aria-label={`Go to slide ${idx + 1}: ${item.title}`}
-                    />
+                      aria-label={`Jump to ${item.title}`}
+                    >
+                      <Image
+                        src={item.type === "video" ? (item.poster || "/slider/slider-1.jpg") : item.src}
+                        alt={item.title}
+                        fill
+                        sizes="44px"
+                        className="object-cover"
+                      />
+                    </button>
                   ))}
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="text-xs text-gray-400 hidden sm:inline">
+                    {currentModalSlide + 1} / {allMediaItems.length}
+                  </span>
+                  <Link
+                    href="/products/1"
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-white text-black hover:bg-gray-200 text-xs uppercase tracking-widest font-semibold rounded-none transition-colors"
+                  >
+                    View Product ($45)
+                  </Link>
+                </div>
+              </div>
+            </Dialog.Panel>
+          </Transition.Child>
         </Dialog>
       </Transition>
     </>
