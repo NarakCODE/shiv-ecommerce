@@ -135,32 +135,25 @@ export default function Menu() {
                       />
                     </form>
                     <Link
-                      href="/product-category/men"
+                      href="/products/1"
                       className="w-full text-xl hover:bg-gray100 text-left py-2"
                       onClick={closeModal}
                     >
-                      {t("men")}
+                      The Gua Sha Tool
                     </Link>
                     <Link
-                      href="/product-category/women"
+                      href="/#how-to-use"
                       className="w-full text-xl hover:bg-gray100 text-left py-2"
                       onClick={closeModal}
                     >
-                      {t("women")}
+                      How To Use
                     </Link>
                     <Link
-                      href="/product-category/bags"
+                      href="/#testimonials"
                       className="w-full text-xl hover:bg-gray100 text-left py-2"
                       onClick={closeModal}
                     >
-                      {t("bags")}
-                    </Link>
-                    <Link
-                      href="/coming-soon"
-                      className="w-full text-xl hover:bg-gray100 text-left py-2"
-                      onClick={closeModal}
-                    >
-                      {t("blogs")}
+                      Reviews
                     </Link>
                     <Link
                       href="/coming-soon"

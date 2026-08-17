@@ -97,16 +97,16 @@ const Header: React.FC<Props> = ({ title }) => {
             {/* Left Nav */}
             <ul className={`flex-0 lg:flex-1 flex ${styles.leftMenu}`}>
               <li>
-                <Link href={`/product-category/men`}>{t("men")}</Link>
+                <Link href="/products/1">The Gua Sha Tool</Link>
               </li>
               <li>
-                <Link href={`/product-category/women`}>{t("women")}</Link>
+                <Link href="/#how-to-use">How To Use</Link>
               </li>
               <li>
-                <Link href="/product-category/bags">{t("bags")}</Link>
+                <Link href="/#testimonials">Reviews</Link>
               </li>
               <li>
-                <Link href="/coming-soon">{t("blogs")}</Link>
+                <Link href="/coming-soon">Our Story</Link>
               </li>
             </ul>
 

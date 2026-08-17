@@ -1,61 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import Image from "next/image";
-import { Disclosure } from "@headlessui/react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Disclosure } from "@headlessui/react";
 
-import Heart from "../../../public/icons/Heart";
+import Header from "../../../components/Header/Header";
+import Footer from "../../../components/Footer/Footer";
+import Button from "../../../components/Buttons/Button";
+import GhostButton from "../../../components/Buttons/GhostButton";
+import HowToUse from "../../../components/HowToUse";
+import { itemType } from "../../../context/cart/cart-types";
+import { useCart } from "../../../context/cart/CartProvider";
+import { useWishlist } from "../../../context/wishlist/WishlistProvider";
 import DownArrow from "../../../public/icons/DownArrow";
 import FacebookLogo from "../../../public/icons/FacebookLogo";
 import InstagramLogo from "../../../public/icons/InstagramLogo";
-import Header from "../../../components/Header/Header";
-import Footer from "../../../components/Footer/Footer";
-import GhostButton from "../../../components/Buttons/GhostButton";
-import Button from "../../../components/Buttons/Button";
-import Card from "../../../components/Card/Card";
-
-// swiperjs
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-
-import { itemType } from "../../../context/cart/cart-types";
-import { useWishlist } from "../../../context/wishlist/WishlistProvider";
-import { useCart } from "../../../context/cart/CartProvider";
+import Heart from "../../../public/icons/Heart";
 import HeartSolid from "../../../public/icons/HeartSolid";
 
 type Props = {
   product: itemType;
-  products: itemType[];
+  products?: itemType[];
 };
 
-export default function ProductClient({ product, products }: Props) {
-  const img1 = product.img1;
-  const img2 = product.img2;
+export default function ProductClient({ product }: Props) {
+  const { img1, img2, price } = product;
+
+  const galleryImages = [
+    (img1 as string) || "https://skinscience.bluelagoon.com/cdn/shop/files/GuaSha_Final-01.jpg?v=1738870888&width=1296",
+    "/slider/slider-1.jpg",
+    "/slider/slider-2.jpg",
+    "/slider/slider-3.jpg",
+  ];
+
+  const [mainImg, setMainImg] = useState(galleryImages[0]);
+  const [currentQty, setCurrentQty] = useState(1);
+  const [added, setAdded] = useState(false);
 
   const { addItem } = useCart();
   const { wishlist, addToWishlist, deleteWishlistItem } = useWishlist();
-  const [size, setSize] = useState("M");
-  const [mainImg, setMainImg] = useState(img1);
-  const [currentQty, setCurrentQty] = useState(1);
-  const t = useTranslations("Category");
 
-  const alreadyWishlisted =
-    wishlist.filter((wItem) => wItem.id === product.id).length > 0;
-
-  useEffect(() => {
-    setMainImg(product.img1);
-  }, [product]);
-
-  const handleSize = (value: string) => {
-    setSize(value);
-  };
-
-  const currentItem = {
+  const currentItem: itemType = {
     ...product,
     qty: currentQty,
   };
+
+  const alreadyWishlisted =
+    wishlist.filter((wItem) => wItem.id === product.id).length > 0;
 
   const handleWishlist = () => {
     alreadyWishlisted
@@ -63,237 +56,199 @@ export default function ProductClient({ product, products }: Props) {
       : addToWishlist!(currentItem);
   };
 
+  const handleAddToCart = () => {
+    addItem!(currentItem);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
+
   return (
     <div>
       {/* ===== Head Section ===== */}
-      <Header title={`${product.name} - Haru Fashion`} />
+      <Header title={`${product.name} - Blue Lagoon Skincare`} />
 
       <main id="main-content">
         {/* ===== Breadcrumb Section ===== */}
         <div className="bg-lightgreen h-16 w-full flex items-center border-t-2 border-gray200">
           <div className="app-x-padding app-max-width w-full">
-            <div className="breadcrumb">
-              <Link href="/" className="text-gray400">
-                {t("home")}
+            <div className="breadcrumb text-sm">
+              <Link href="/" className="text-gray400 hover:text-gray500">
+                Home
               </Link>{" "}
-              /{" "}
-              <Link
-                href={`/product-category/${product.categoryName}`}
-                className="text-gray400 capitalize"
-              >
-                {t(product.categoryName as string)}
-              </Link>{" "}
-              / <span>{product.name}</span>
+              / <span className="text-gray500">{product.name}</span>
             </div>
           </div>
         </div>
+
         {/* ===== Main Content Section ===== */}
-        <div className="itemSection app-max-width app-x-padding flex flex-col md:flex-row">
-          <div className="imgSection w-full md:w-1/2 h-full flex">
-            <div className="hidden sm:block w-full sm:w-1/4 h-full space-y-4 my-4">
-              <Image
-                className={`cursor-pointer ${
-                  mainImg === img1
-                    ? "opacity-100 border border-gray300"
-                    : "opacity-50"
-                }`}
-                onClick={() => setMainImg(img1)}
-                src={img1 as string}
-                alt={product.name}
-                width={1000}
-                height={1282}
-              />
-              <Image
-                className={`cursor-pointer ${
-                  mainImg === img2
-                    ? "opacity-100 border border-gray300"
-                    : "opacity-50"
-                }`}
-                onClick={() => setMainImg(img2)}
-                src={img2 as string}
-                alt={product.name}
-                width={1000}
-                height={1282}
-              />
+        <div className="itemSection app-max-width app-x-padding py-10 flex flex-col md:flex-row gap-10">
+          {/* Left Gallery */}
+          <div className="imgSection w-full md:w-1/2 flex flex-col-reverse sm:flex-row gap-4">
+            <div className="flex sm:flex-col gap-3 justify-center sm:justify-start">
+              {galleryImages.map((imgSrc, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setMainImg(imgSrc)}
+                  className={`relative size-20 border transition-all overflow-hidden rounded-xs ${
+                    mainImg === imgSrc
+                      ? "border-gray500 ring-1 ring-gray500 opacity-100"
+                      : "border-gray200 opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src={imgSrc}
+                    alt={`${product.name} view ${idx + 1}`}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
             </div>
-            <div className="w-full sm:w-3/4 h-full m-0 sm:m-4">
-              <Swiper
-                modules={[Pagination]}
-                slidesPerView={1}
-                spaceBetween={0}
-                loop={true}
-                pagination={{
-                  clickable: true,
-                }}
-                className="mySwiper sm:hidden"
-              >
-                <SwiperSlide>
-                  <Image
-                    className="each-slide w-full"
-                    src={img1 as string}
-                    width={1000}
-                    height={1282}
-                    alt={product.name}
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <Image
-                    className="each-slide w-full"
-                    src={img2 as string}
-                    width={1000}
-                    height={1282}
-                    alt={product.name}
-                  />
-                </SwiperSlide>
-              </Swiper>
-              <div className="hidden sm:block h-full">
-                <Image
-                  className="w-full"
-                  src={mainImg as string}
-                  width={1000}
-                  height={1282}
-                  alt={product.name}
-                />
-              </div>
+
+            <div className="relative flex-1 aspect-square bg-gray-50 border border-gray200 overflow-hidden rounded-xs">
+              <Image
+                src={mainImg}
+                alt={product.name}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
             </div>
           </div>
-          <div className="infoSection w-full md:w-1/2 h-auto py-8 sm:pl-4 flex flex-col">
-            <h1 className="text-3xl mb-4">{product.name}</h1>
-            <span className="text-2xl text-gray400 mb-2">
-              $ {product.price}
-            </span>
-            <span className="mb-2 text-justify">{product.description}</span>
-            <span className="mb-2">
-              {t("availability")}: {t("in_stock")}
-            </span>
-            <span className="mb-2">
-              {t("size")}: {size}
-            </span>
-            <div className="sizeContainer flex space-x-4 text-sm mb-4">
-              <div
-                onClick={() => handleSize("S")}
-                className={`w-8 h-8 flex items-center justify-center border ${
-                  size === "S"
-                    ? "border-gray500"
-                    : "border-gray300 text-gray400"
-                } cursor-pointer hover:bg-gray500 hover:text-gray100`}
-              >
-                S
-              </div>
-              <div
-                onClick={() => handleSize("M")}
-                className={`w-8 h-8 flex items-center justify-center border ${
-                  size === "M"
-                    ? "border-gray500"
-                    : "border-gray300 text-gray400"
-                } cursor-pointer hover:bg-gray500 hover:text-gray100`}
-              >
-                M
-              </div>
-              <div
-                onClick={() => handleSize("L")}
-                className={`w-8 h-8 flex items-center justify-center border ${
-                  size === "L"
-                    ? "border-gray500"
-                    : "border-gray300 text-gray400"
-                } cursor-pointer hover:bg-gray500 hover:text-gray100`}
-              >
-                L
+
+          {/* Right Product Info */}
+          <div className="infoSection w-full md:w-1/2 flex flex-col space-y-5">
+            <div>
+              <span className="text-xs uppercase tracking-widest text-gray400 font-semibold block mb-1">
+                Authentic Icelandic Skincare
+              </span>
+              <h1 className="text-2xl sm:text-3xl text-gray500 font-normal tracking-wide">
+                {product.name}
+              </h1>
+            </div>
+
+            {/* Price & Rating */}
+            <div className="flex items-center gap-4">
+              <span className="text-2xl sm:text-3xl font-light text-gray500">
+                ${price}.00
+              </span>
+              <div className="flex items-center text-amber-500 text-sm">
+                ★★★★★ <span className="text-gray400 ml-1.5">(128 reviews)</span>
               </div>
             </div>
-            <div className="addToCart flex flex-col sm:flex-row md:flex-col lg:flex-row space-y-4 sm:space-y-0 mb-4">
-              <div className="plusOrMinus h-12 flex border justify-center border-gray300 divide-x-2 divide-gray300 mb-4 mr-0 sm:mr-4 md:mr-0 lg:mr-4">
-                <div
-                  onClick={() => setCurrentQty((prevState) => prevState - 1)}
-                  className={`${
-                    currentQty === 1 && "pointer-events-none"
-                  } h-full w-full sm:w-12 flex justify-center items-center cursor-pointer hover:bg-gray500 hover:text-gray100`}
-                >
-                  -
+
+            {/* In Stock Badge */}
+            <div>
+              <span className="inline-block bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">
+                In Stock & Free Shipping
+              </span>
+            </div>
+
+            {/* Short Description */}
+            <p className="text-gray400 text-sm sm:text-base leading-relaxed">
+              {product.detail}
+            </p>
+
+            {/* Size Spec */}
+            <div className="pt-2">
+              <span className="text-xs uppercase tracking-wider text-gray400 font-medium block mb-1.5">
+                Specification
+              </span>
+              <span className="inline-block px-3 py-1.5 border border-gray300 text-xs text-gray500 font-medium">
+                One Size — Ergonomic Facial Contour
+              </span>
+            </div>
+
+            {/* Quantity & Actions */}
+            <div className="pt-2 space-y-4">
+              <div className="flex items-center gap-4">
+                {/* Quantity selector */}
+                <div className="flex items-center border border-gray300">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentQty(Math.max(1, currentQty - 1))}
+                    className="px-3.5 py-2.5 text-gray500 hover:bg-gray-100 transition-colors"
+                  >
+                    -
+                  </button>
+                  <span className="px-4 py-2.5 text-sm font-medium text-gray500 min-w-10 text-center">
+                    {currentQty}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentQty(currentQty + 1)}
+                    className="px-3.5 py-2.5 text-gray500 hover:bg-gray-100 transition-colors"
+                  >
+                    +
+                  </button>
                 </div>
-                <div className="h-full w-28 sm:w-12 flex justify-center items-center pointer-events-none">
-                  {currentQty}
-                </div>
-                <div
-                  onClick={() => setCurrentQty((prevState) => prevState + 1)}
-                  className="h-full w-full sm:w-12 flex justify-center items-center cursor-pointer hover:bg-gray500 hover:text-gray100"
-                >
-                  +
-                </div>
-              </div>
-              <div className="flex h-12 space-x-4 w-full">
+
+                {/* Add to Cart */}
                 <Button
-                  value={t("add_to_cart")}
+                  value={added ? "✓ Added To Cart" : "Add To Cart"}
                   size="lg"
-                  extraClass={`flex-grow text-center whitespace-nowrap`}
-                  onClick={() => addItem!(currentItem)}
+                  extraClass={`flex-1 text-center uppercase tracking-widest text-xs font-semibold ${
+                    added ? "bg-emerald-700 text-white" : ""
+                  }`}
+                  onClick={handleAddToCart}
                 />
+
+                {/* Wishlist toggle */}
                 <GhostButton onClick={handleWishlist}>
                   {alreadyWishlisted ? (
-                    <HeartSolid extraClass="inline" />
+                    <HeartSolid extraClass="size-5 text-red-500" />
                   ) : (
-                    <Heart extraClass="inline" />
+                    <Heart extraClass="size-5" />
                   )}
                 </GhostButton>
               </div>
+
+              <Link
+                href="/checkout"
+                onClick={() => addItem!(currentItem)}
+                className="block w-full text-center py-3 px-6 uppercase tracking-widest text-xs font-semibold border border-gray500 text-gray500 hover:bg-gray500 hover:text-white transition-all duration-300"
+              >
+                Proceed to Checkout
+              </Link>
             </div>
-            <Disclosure>
-              {({ open }) => (
-                <>
-                  <Disclosure.Button className="py-2 focus:outline-none text-left mb-4 border-b-2 border-gray200 flex items-center justify-between">
-                    <span>{t("details")}</span>
-                    <DownArrow
-                      extraClass={`${
-                        open ? "" : "transform rotate-180"
-                      } w-5 h-5 text-gray500`}
-                    />
-                  </Disclosure.Button>
-                  <Disclosure.Panel
-                    className={`text-gray400 animate__animated animate__bounceIn`}
-                  >
-                    {product.detail}
-                  </Disclosure.Panel>
-                </>
-              )}
-            </Disclosure>
-            <div className="flex items-center space-x-4 mt-4">
-              <span>{t("share")}</span>
+
+            {/* Accordion Details */}
+            <div className="pt-4 border-t border-gray200">
+              <Disclosure defaultOpen>
+                {({ open }) => (
+                  <>
+                    <Disclosure.Button className="py-2.5 w-full focus:outline-none text-left flex items-center justify-between font-medium text-gray500">
+                      <span>Ritual & Material Details</span>
+                      <DownArrow
+                        extraClass={`${
+                          open ? "" : "transform rotate-180"
+                        } size-4 text-gray500 transition-transform`}
+                      />
+                    </Disclosure.Button>
+                    <Disclosure.Panel className="text-gray400 text-sm leading-relaxed pt-2 pb-4">
+                      {product.detail}
+                    </Disclosure.Panel>
+                  </>
+                )}
+              </Disclosure>
+            </div>
+
+            <div className="flex items-center space-x-4 pt-2">
+              <span className="text-xs uppercase tracking-wider text-gray400">
+                Share:
+              </span>
               <FacebookLogo extraClass="h-4 cursor-pointer text-gray400 hover:text-gray500" />
               <InstagramLogo extraClass="h-4 cursor-pointer text-gray400 hover:text-gray500" />
             </div>
           </div>
         </div>
-        {/* ===== Horizontal Divider ===== */}
-        <div className="border-b-2 border-gray200"></div>
 
-        {/* ===== You May Also Like Section ===== */}
-        <div className="recSection my-8 app-max-width app-x-padding">
-          <h2 className="text-3xl mb-6">{t("you_may_also_like")}</h2>
-          <Swiper
-            modules={[Pagination]}
-            slidesPerView={2}
-            spaceBetween={10}
-            loop={true}
-            grabCursor={true}
-            pagination={{
-              clickable: true,
-              type: "bullets",
-            }}
-            className="mySwiper card-swiper sm:hidden"
-          >
-            {products.map((item) => (
-              <SwiperSlide key={item.id}>
-                <div className="mb-6">
-                  <Card key={item.id} item={item} />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-          <div className="hidden sm:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-10 sm:gap-y-6 mb-10">
-            {products.map((item) => (
-              <Card key={item.id} item={item} />
-            ))}
-          </div>
+        {/* ===== How To Use & Videos Preview Section ===== */}
+        <div className="border-t border-gray200">
+          <HowToUse />
         </div>
       </main>
 

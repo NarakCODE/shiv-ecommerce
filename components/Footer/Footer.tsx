@@ -37,9 +37,10 @@ export default function Footer() {
           <div>
             <h3 className={styles.footerHead}>{t("store")}</h3>
             <div className={styles.column}>
-              <Link href={`/product-category/women`}>{t("women")}</Link>
-              <Link href={`/product-category/men`}>{t("men")}</Link>
-              <Link href={`/product-category/bags`}>{t("bags")}</Link>
+              <Link href="/products/1">The Gua Sha Tool</Link>
+              <Link href="/#how-to-use">How To Use</Link>
+              <Link href="/shopping-cart">Shopping Cart</Link>
+              <Link href="/wishlist">Wishlist</Link>
             </div>
           </div>
           <div>
