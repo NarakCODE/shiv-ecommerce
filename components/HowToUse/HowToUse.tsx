@@ -12,7 +12,6 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 
 import styles from "./HowToUse.module.css";
 
@@ -64,59 +63,6 @@ const videos: MediaItem[] = [
     poster: "/slider/slider-4.jpg",
   },
 ];
-
-const sliderImages: MediaItem[] = [
-  {
-    id: "img-1",
-    type: "image",
-    title: "Ritual Guide: Step by Step",
-    subtitle: "Step 1 Prep",
-    src: "/slider/slider-1.jpg",
-    alt: "Gua Sha Ritual Guide 1",
-  },
-  {
-    id: "img-2",
-    type: "image",
-    title: "Skin Anatomy & Pressure Points",
-    subtitle: "Facial Anatomy",
-    src: "/slider/slider-2.jpg",
-    alt: "Gua Sha Ritual Guide 2",
-  },
-  {
-    id: "img-3",
-    type: "image",
-    title: "Daily Lifting & Sculpting Guide",
-    subtitle: "Daily Technique",
-    src: "/slider/slider-3.jpg",
-    alt: "Gua Sha Ritual Guide 3",
-  },
-  {
-    id: "img-4",
-    type: "image",
-    title: "Product Layering & Benefits",
-    subtitle: "Serum & Oil Layering",
-    src: "/slider/slider-4.jpg",
-    alt: "Gua Sha Ritual Guide 4",
-  },
-  {
-    id: "img-5",
-    type: "image",
-    title: "Firming & Glow Results",
-    subtitle: "Proven Benefits",
-    src: "/slider/slider-5.jpg",
-    alt: "Gua Sha Ritual Guide 5",
-  },
-  {
-    id: "img-6",
-    type: "image",
-    title: "Care & Cleansing Guide",
-    subtitle: "Stone Cleansing",
-    src: "/slider/slider-6.jpg",
-    alt: "Gua Sha Ritual Guide 6",
-  },
-];
-
-const allMediaItems: MediaItem[] = [...videos, ...sliderImages];
 
 const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -306,10 +252,9 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
             </div>
           </div>
 
-          {/* ===== Videos & Carousel Grid at Bottom ===== */}
+          {/* ===== 4 Videos Grid at Bottom ===== */}
           <div className="mt-14 mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {/* 4 Video Items */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {videos.map((vid, index) => (
                 <div
                   key={vid.id}
@@ -353,72 +298,6 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                   </div>
                 </div>
               ))}
-
-              {/* 5th Item: shadcn Carousel Component with /slider images */}
-              <div
-                className="group relative flex flex-col bg-white border border-gray200 p-3 sm:p-4 h-full shadow-xs cursor-pointer hover:border-gray400 transition-all duration-200"
-                onClick={() => openModalAt(4)}
-                role="button"
-                tabIndex={0}
-                aria-label="Preview Ritual Slider Images"
-              >
-                <div className={styles.carouselWrapper}>
-                  <Carousel
-                    opts={{
-                      align: "start",
-                      loop: true,
-                    }}
-                    plugins={[
-                      Autoplay({
-                        delay: 3500,
-                        stopOnInteraction: false,
-                      }),
-                    ]}
-                    className="w-full h-full"
-                  >
-                    <CarouselContent className="h-full -ml-0">
-                      {sliderImages.map((img) => (
-                        <CarouselItem
-                          key={img.id}
-                          className="relative w-full h-full pl-0 min-w-full"
-                        >
-                          <Image
-                            src={img.src}
-                            alt={img.alt || ""}
-                            fill
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
-                            className="w-full h-full object-cover"
-                          />
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </Carousel>
-
-                  {/* Hover expand overlay */}
-                  <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none z-10">
-                    <span className="bg-white/95 text-gray800 text-xs font-semibold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 backdrop-blur-xs tracking-wider uppercase">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="size-3.5"
-                      >
-                        <path d="M15 3h6v6" />
-                        <path d="M9 21H3v-6" />
-                        <path d="M21 3l-7 7" />
-                        <path d="M3 21l7-7" />
-                      </svg>
-                      Full Web Preview
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -449,11 +328,11 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                   </div>
                   <div>
                     <h3 className="text-sm sm:text-base md:text-lg font-medium text-white tracking-wide">
-                      {allMediaItems[currentModalSlide]?.title}
+                      {videos[currentModalSlide]?.title}
                     </h3>
                     <p className="text-xs text-gray-400">
-                      Blue Lagoon Skincare Ritual • Item {currentModalSlide + 1} of{" "}
-                      {allMediaItems.length}
+                      Blue Lagoon Skincare Ritual • Technique {currentModalSlide + 1} of{" "}
+                      {videos.length}
                     </p>
                   </div>
                 </div>
@@ -495,37 +374,22 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                   className="w-full h-full flex items-center justify-center"
                 >
                   <CarouselContent className="h-full -ml-0">
-                    {allMediaItems.map((item, idx) => (
+                    {videos.map((item, idx) => (
                       <CarouselItem
                         key={item.id}
                         className="relative w-full h-full pl-0 min-w-full flex items-center justify-center"
                       >
                         <div className={styles.modalSlideMedia}>
-                          {item.type === "video" ? (
-                            <video
-                              key={item.src}
-                              src={item.src}
-                              controls
-                              autoPlay={currentModalSlide === idx}
-                              loop
-                              playsInline
-                              className="w-full h-full max-h-full object-contain rounded-md shadow-2xl"
-                              aria-label={item.title}
-                            />
-                          ) : (
-                            <div className="relative w-full h-full flex items-center justify-center">
-                              <Image
-                                src={item.src}
-                                alt={item.alt || item.title}
-                                fill
-                                sizes="100vw"
-                                className="object-contain rounded-md"
-                                priority={
-                                  Math.abs(currentModalSlide - idx) <= 1
-                                }
-                              />
-                            </div>
-                          )}
+                          <video
+                            key={item.src}
+                            src={item.src}
+                            controls
+                            autoPlay={currentModalSlide === idx}
+                            loop
+                            playsInline
+                            className="w-full h-full max-h-full object-contain rounded-md shadow-2xl"
+                            aria-label={item.title}
+                          />
                         </div>
                       </CarouselItem>
                     ))}
@@ -540,7 +404,7 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
               {/* Full Page Bottom Bar: Quick Thumbnails & Action */}
               <div className={styles.modalFooter}>
                 <div className="flex items-center gap-2 overflow-x-auto max-w-full py-1">
-                  {allMediaItems.map((item, idx) => (
+                  {videos.map((item, idx) => (
                     <button
                       key={item.id}
                       type="button"
@@ -553,7 +417,7 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
                       aria-label={`Jump to ${item.title}`}
                     >
                       <Image
-                        src={item.type === "video" ? (item.poster || "/slider/slider-1.jpg") : item.src}
+                        src={item.poster || "/slider/slider-1.jpg"}
                         alt={item.title}
                         fill
                         sizes="44px"
@@ -565,7 +429,7 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
 
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-xs text-gray-400 hidden sm:inline">
-                    {currentModalSlide + 1} / {allMediaItems.length}
+                    {currentModalSlide + 1} / {videos.length}
                   </span>
                   <Link
                     href="/products/1"
