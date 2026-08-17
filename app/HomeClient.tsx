@@ -13,7 +13,7 @@ import HowToUse from "../components/HowToUse";
 import { itemType } from "../context/cart/cart-types";
 import { useCart } from "../context/cart/CartProvider";
 import { useWishlist } from "../context/wishlist/WishlistProvider";
-import { SINGLE_PRODUCT } from "../lib/product";
+import { SINGLE_PRODUCT, PRODUCT_IMAGES } from "../lib/product";
 import Heart from "../public/icons/Heart";
 import HeartSolid from "../public/icons/HeartSolid";
 import ourShop from "../public/bg-img/ourshop.png";
@@ -39,8 +39,7 @@ export default function HomeClient({
 
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState<string>(
-    (activeProduct.img1 as string) ||
-      "https://skinscience.bluelagoon.com/cdn/shop/files/GuaSha_Final-01.jpg?v=1738870888&width=1296"
+    (activeProduct.img1 as string) || PRODUCT_IMAGES[0]
   );
   const [addedAnimation, setAddedAnimation] = useState(false);
 
@@ -62,12 +61,7 @@ export default function HomeClient({
     setTimeout(() => setAddedAnimation(false), 1500);
   };
 
-  const productImages = [
-    "https://skinscience.bluelagoon.com/cdn/shop/files/GuaSha_Final-01.jpg?v=1738870888&width=1296",
-    "/slider/slider-1.jpg",
-    "/slider/slider-2.jpg",
-    "/slider/slider-3.jpg",
-  ];
+  const productImages = PRODUCT_IMAGES;
 
   return (
     <>

@@ -8,16 +8,7 @@ import { useTranslations } from "next-intl";
 
 import SearchIcon from "../../public/icons/SearchIcon";
 import { itemType } from "../../context/cart/cart-types";
-
-const SINGLE_PRODUCT: itemType = {
-  id: 1,
-  name: "Blue Lagoon Skincare Gua Sha Tool",
-  price: 45,
-  detail:
-    "Crafted from authentic Icelandic volcanic mineral stone for facial lifting and lymphatic drainage.",
-  img1: "https://skinscience.bluelagoon.com/cdn/shop/files/GuaSha_Final-01.jpg?v=1738870888&width=1296",
-  img2: "/slider/slider-1.jpg",
-};
+import { SINGLE_PRODUCT } from "../../lib/product";
 
 export default function SearchForm() {
   const t = useTranslations("Navigation");

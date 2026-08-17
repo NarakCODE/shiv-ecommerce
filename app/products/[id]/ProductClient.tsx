@@ -14,6 +14,7 @@ import HowToUse from "../../../components/HowToUse";
 import { itemType } from "../../../context/cart/cart-types";
 import { useCart } from "../../../context/cart/CartProvider";
 import { useWishlist } from "../../../context/wishlist/WishlistProvider";
+import { PRODUCT_IMAGES } from "../../../lib/product";
 import DownArrow from "../../../public/icons/DownArrow";
 import FacebookLogo from "../../../public/icons/FacebookLogo";
 import InstagramLogo from "../../../public/icons/InstagramLogo";
@@ -29,12 +30,7 @@ type Props = {
 export default function ProductClient({ product }: Props) {
   const { img1, img2, price } = product;
 
-  const galleryImages = [
-    (img1 as string) || "https://skinscience.bluelagoon.com/cdn/shop/files/GuaSha_Final-01.jpg?v=1738870888&width=1296",
-    "/slider/slider-1.jpg",
-    "/slider/slider-2.jpg",
-    "/slider/slider-3.jpg",
-  ];
+  const galleryImages = PRODUCT_IMAGES;
 
   const [mainImg, setMainImg] = useState(galleryImages[0]);
   const [currentQty, setCurrentQty] = useState(1);
