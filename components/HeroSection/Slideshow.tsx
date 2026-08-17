@@ -105,7 +105,8 @@ const Slideshow = () => {
             <SwiperSlide key={slider.id}>
               <div className="hidden lg:block">
                 <Image
-                  layout="responsive"
+                  sizes="100vw"
+                  style={{ width: "100%", height: "auto" }}
                   src={slider.image}
                   width={slider.width || 1144}
                   height={slider.height || 572}
@@ -114,7 +115,8 @@ const Slideshow = () => {
               </div>
               <div className="hidden sm:block lg:hidden">
                 <Image
-                  layout="responsive"
+                  sizes="100vw"
+                  style={{ width: "100%", height: "auto" }}
                   src={slider.imageTablet}
                   width={slider.widthTablet || 820}
                   height={slider.heightTablet || 720}
@@ -123,7 +125,8 @@ const Slideshow = () => {
               </div>
               <div className="sm:hidden">
                 <Image
-                  layout="responsive"
+                  sizes="100vw"
+                  style={{ width: "100%", height: "auto" }}
                   src={slider.imageMobile}
                   width={slider.widthMobile || 428}
                   height={slider.heightMobile || 800}

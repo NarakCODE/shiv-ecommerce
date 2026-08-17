@@ -49,7 +49,8 @@ const Card: FC<Props> = ({ item }) => {
                 alt={name}
                 width={230}
                 height={300}
-                layout="responsive"
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
               />
             )}
             {isHovered && (
@@ -59,7 +60,8 @@ const Card: FC<Props> = ({ item }) => {
                 alt={name}
                 width={230}
                 height={300}
-                layout="responsive"
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
               />
             )}
           </span>

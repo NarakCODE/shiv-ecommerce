@@ -120,7 +120,8 @@ const Header: React.FC<Props> = ({ title }) => {
                     alt="Picture of the author"
                     width={220}
                     height={50}
-                    layout="responsive"
+                    sizes="100vw"
+                    style={{ width: "100%", height: "auto" }}
                   />
                 </Link>
               </div>

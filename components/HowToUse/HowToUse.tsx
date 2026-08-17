@@ -161,7 +161,7 @@ const HowToUse: React.FC<Props> = ({ extraClass = "" }) => {
               alt="How To Use the Blue Lagoon Skincare Gua Sha Tool"
               width={1296}
               height={729}
-              layout="responsive"
+              sizes="100vw"
               priority
               className="w-full h-auto object-cover"
             />

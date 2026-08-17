@@ -632,7 +632,8 @@ export default function CheckoutPage() {
                         alt="Haru Fashion"
                         width={220}
                         height={50}
-                        layout="responsive"
+                        sizes="100vw"
+                        style={{ width: "100%", height: "auto" }}
                       />
                     </div>
                   </div>
