@@ -13,38 +13,50 @@ import HowToUse from "../components/HowToUse";
 import { itemType } from "../context/cart/cart-types";
 import { useCart } from "../context/cart/CartProvider";
 import { useWishlist } from "../context/wishlist/WishlistProvider";
+import { SINGLE_PRODUCT } from "../lib/product";
 import Heart from "../public/icons/Heart";
 import HeartSolid from "../public/icons/HeartSolid";
 import ourShop from "../public/bg-img/ourshop.png";
 
 type Props = {
-  initialProduct: itemType;
+  initialProduct?: itemType;
+  initialProducts?: itemType[];
 };
 
-export default function HomeClient({ initialProduct }: Props) {
+export default function HomeClient({
+  initialProduct,
+  initialProducts,
+}: Props) {
+  const activeProduct =
+    initialProduct ||
+    (Array.isArray(initialProducts) && initialProducts.length > 0
+      ? initialProducts[0]
+      : SINGLE_PRODUCT);
+
   const t = useTranslations("Index");
   const { addOne } = useCart();
   const { wishlist, addToWishlist, deleteWishlistItem } = useWishlist();
 
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState<string>(
-    (initialProduct.img1 as string) || "/slider/slider-1.jpg"
+    (activeProduct.img1 as string) ||
+      "https://skinscience.bluelagoon.com/cdn/shop/files/GuaSha_Final-01.jpg?v=1738870888&width=1296"
   );
   const [addedAnimation, setAddedAnimation] = useState(false);
 
-  const isWishlisted = wishlist.some((item) => item.id === initialProduct.id);
+  const isWishlisted = wishlist.some((item) => item.id === activeProduct.id);
 
   const handleWishlist = () => {
     if (isWishlisted) {
-      deleteWishlistItem!(initialProduct);
+      deleteWishlistItem!(activeProduct);
     } else {
-      addToWishlist!(initialProduct);
+      addToWishlist!(activeProduct);
     }
   };
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
-      addOne!(initialProduct);
+      addOne!(activeProduct);
     }
     setAddedAnimation(true);
     setTimeout(() => setAddedAnimation(false), 1500);
@@ -102,7 +114,7 @@ export default function HomeClient({ initialProduct }: Props) {
               <div className="relative flex-1 aspect-4/3 sm:aspect-square bg-gray-50 border border-gray200 overflow-hidden rounded-xs group">
                 <Image
                   src={selectedImage}
-                  alt={initialProduct.name}
+                  alt={activeProduct.name}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 55vw"
@@ -130,7 +142,7 @@ export default function HomeClient({ initialProduct }: Props) {
                   Icelandic Mineral Wellness
                 </span>
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl text-gray500 font-medium tracking-wide">
-                  {initialProduct.name}
+                  {activeProduct.name}
                 </h1>
               </div>
 
@@ -150,7 +162,7 @@ export default function HomeClient({ initialProduct }: Props) {
               {/* Price */}
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-light text-gray500 tracking-tight">
-                  ${initialProduct.price}.00
+                  ${activeProduct.price}.00
                 </span>
                 <span className="text-sm text-gray400">
                   Free Worldwide Shipping
@@ -159,7 +171,7 @@ export default function HomeClient({ initialProduct }: Props) {
 
               {/* Description */}
               <p className="text-sm sm:text-base text-gray400 leading-relaxed">
-                {initialProduct.detail}
+                {activeProduct.detail}
               </p>
 
               {/* Ritual Highlights */}
@@ -225,7 +237,7 @@ export default function HomeClient({ initialProduct }: Props) {
                 {/* Direct Checkout Button */}
                 <Link
                   href="/checkout"
-                  onClick={() => addOne!(initialProduct)}
+                  onClick={() => addOne!(activeProduct)}
                   className="block w-full text-center py-3 px-6 uppercase tracking-widest text-xs font-semibold border border-gray500 text-gray500 hover:bg-gray500 hover:text-white transition-all duration-300"
                 >
                   Buy Now — Fast Checkout
